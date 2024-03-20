@@ -68,14 +68,16 @@ public class Config extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .csrf().disable()
+                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                //.exceptionHandling().authenticationEntryPoint(authEntryPoinJwt).and()
                 .authorizeRequests()
-                .antMatchers("/", "/api/auth").authenticated()
-                .antMatchers("/", "/api/auth/**","/api/User").permitAll()
+                .antMatchers( "/api/auth/google").authenticated()
+                .antMatchers( "/api/auth/**","/api/User").permitAll()
                 .antMatchers("/api/Project/**").hasAnyAuthority("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
-                .oauth2Login();
+               .oauth2Login();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }

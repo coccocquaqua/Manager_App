@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String Username) throws UsernameNotFoundException {
         Optional<Users> users = userRepository.findUsersByUsername(Username);
@@ -27,9 +29,14 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
         System.out.println("Found user!" + Username);
         Users user = users.get();
+        UserDetails userDetails;
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()));
-        UserDetails userDetails = new User(users.get().getUsername(), users.get().getPassword(),authorities );
-        System.out.println(userDetails+"hehe");
+        if (users.get().getGoogleId() != null && !users.get().getGoogleId().isEmpty()) {
+            userDetails = new User(users.get().getUsername(), "", authorities);
+            return userDetails;
+        }
+        userDetails = new User(users.get().getUsername(), users.get().getPassword(), authorities);
+        System.out.println(userDetails + "hehe");
         return userDetails;
     }
 }
