@@ -1,7 +1,9 @@
 package com.example.manager_app.restcontroller;
 
+import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Users;
 import com.example.manager_app.repository.UserRepository;
+import com.example.manager_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,10 +19,13 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserService userService;
 
     @GetMapping
+
     public ResponseEntity<?> getAllPage() {
-        List<Users> users = userRepository.findAll();
+        List<UserProjectReponse> users = userService.getAll();
         return ResponseEntity.ok(users);
     }
     @PostMapping
@@ -30,4 +35,11 @@ public class UserController {
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }
+    @GetMapping("/filter-project/{projectId}")
+    public ResponseEntity<?> getUserByProject(@PathVariable Integer projectId) {
+        System.out.println(projectId+"bbb");
+        List<UserProjectReponse> userProjectReponse = userService.getUserByProject(projectId);
+        return ResponseEntity.ok(userProjectReponse);
+    }
+
 }

@@ -72,7 +72,7 @@ public class Config extends WebSecurityConfigurerAdapter {
                 //.exceptionHandling().authenticationEntryPoint(authEntryPoinJwt).and()
                 .authorizeRequests()
                 .antMatchers( "/api/auth/google").authenticated()
-                .antMatchers( "/api/auth/**","/api/User").permitAll()
+                .antMatchers( "/api/auth/**","/api/User/**").permitAll()
                 .antMatchers("/api/Project/**").hasAnyAuthority("ADMIN")
                 .anyRequest()
                 .authenticated()
