@@ -1,5 +1,6 @@
 package com.example.manager_app.service;
 
+import com.example.manager_app.dto.ProjectByUserRespone;
 import com.example.manager_app.dto.UserInfoResponse;
 import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Project;
@@ -11,6 +12,7 @@ import com.example.manager_app.repository.UserRepository;
 import com.example.manager_app.repository.User_ProjectRepository;
 import com.example.manager_app.security.JwtUtils;
 import com.example.manager_app.security.UserDetailServiceImpl;
+import com.mysql.cj.conf.PropertyKey;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,7 +40,8 @@ public class UserService {
     ProjectRepository projectRepository;
     @Autowired
     User_ProjectRepository user_projectRepository;
-
+    @Autowired
+    ProjectService projectService;
     private final ModelMapper modelMapper;
 
     public UserService(ModelMapper modelMapper) {
@@ -81,7 +85,7 @@ public class UserService {
     }
 
     public List<UserProjectReponse> getUserByProject(Integer projectId) {
-        Optional<Project> project1 = projectRepository.findById(projectId);
+        // Optional<Project> project1 = projectRepository.findById(projectId);
         List<UserProjectReponse> userProjectReponse = new ArrayList<>();
         List<User_Project> user_projects = user_projectRepository.findUser_ProjectByProjectId(projectId);
         System.out.println("kkk" + user_projects);
@@ -96,6 +100,7 @@ public class UserService {
 
         return userProjectReponse;
     }
+
 
     public List<UserProjectReponse> getAll() {
         List<Users> users = userRepository.findAll();
@@ -115,11 +120,63 @@ public class UserService {
         }
         return list;
     }
-    public UserInfoResponse addUser(Users users, List<Project>projectList){
-        Optional<Users>usersOptional=userRepository.findById(users.getId());
 
-        users.setRole(Role.USER);
-       Users users1=userRepository.save(users);
+    public UserProjectReponse addUser(Users users, List<ProjectByUserRespone> projectList) {
+        Optional<Users> usersOptional = userRepository.findById(users.getId());
+        List<User_Project> user_projects = null;
+        if (usersOptional.isPresent()) {
+            Users users1 = usersOptional.get();
+            List<ProjectByUserRespone> projectByUser = projectService.getProjectByUser(users1.getId());
+            List<User_Project> projectToAdd = new ArrayList<>();
+            List<Integer> projectToDelete = new ArrayList<>();
+            //List<Project> projects = projectRepository.findAll();
+            user_projects = user_projectRepository.findAll();
+            // lọc ra các project cần thêm
+            for (ProjectByUserRespone item : projectList) {
+                for (ProjectByUserRespone item1 : projectByUser) {
+                    if (item.getId() == item1.getId()) {
+                        continue;
+                    }
 
+                }
+                Optional<Project> projectOptional = projectRepository.findById(item.getId());
+                if (projectOptional.isPresent()) {
+                    User_Project userProject = new User_Project();
+                    userProject.setProject(projectOptional.get());
+                    userProject.setUsers(users1);
+                    userProject.setRole(item.getRole());
+                    projectToAdd.add(userProject);
+                }
+            }
+            for (ProjectByUserRespone item : projectByUser) {
+                System.out.println(item);
+                projectToDelete.add(item.getId());
+            }
+            for (Integer item : projectToDelete) {
+                System.out.println(users1.getId());
+                System.out.println(item);
+                user_projectRepository.deleteUser_ProjectByUsersIdAndProjectId(users1.getId(), item);
+            }
+            users1.setUsername(users.getUsername());
+            users1.setEmail(users.getEmail());
+            if(!users.getGoogleId().isEmpty() && !users.getGoogleId().equalsIgnoreCase("")&& users.getGoogleId()!=null){
+                users1.setGoogleId(users.getGoogleId());
+            }
+            users1.setRole(Role.USER);
+            userRepository.save(users1);
+            user_projectRepository.saveAll(projectToAdd);
+
+        }
+        UserProjectReponse userProjectReponse = new UserProjectReponse();
+        userProjectReponse.setUsername(users.getUsername());
+        userProjectReponse.setEmail(users.getEmail());
+        for (User_Project item1 : user_projects) {
+            if (item1.getUsers() != null && item1.getUsers().getId() != null && item1.getUsers().getId() == users.getId()) {
+                userProjectReponse.setRole(item1.getRole());
+                break;
+            }
+        }
+        return userProjectReponse;
     }
+
 }

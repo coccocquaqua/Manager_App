@@ -20,7 +20,7 @@ public class Users {
     private String email;
     @Column(name = "password")
     private String password;
-    @Column(name = "google_id")
+    @Column(name = "google_id",nullable = true, columnDefinition = "varchar(255) default ''")
     private String googleId;
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

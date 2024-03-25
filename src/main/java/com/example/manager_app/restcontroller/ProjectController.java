@@ -1,16 +1,16 @@
 package com.example.manager_app.restcontroller;
 
+import com.example.manager_app.dto.ProjectByUserRespone;
+import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Project;
 import com.example.manager_app.repository.ProjectRepository;
 import com.example.manager_app.security.JwtUtils;
 import com.example.manager_app.security.UserDetailServiceImpl;
+import com.example.manager_app.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,10 +24,17 @@ public class ProjectController {
     private UserDetailServiceImpl userDetailServiceImpl;
     @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
+    private ProjectService projectService;
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllPage() {
         List<Project> projects = projectRepository.findAll();
         return ResponseEntity.ok(projects);
+    }
+    @GetMapping("/filter-user/{userId}")
+    public ResponseEntity<?> getUserByProject(@PathVariable Integer userId) {
+        List<ProjectByUserRespone> projectByUser = projectService.getProjectByUser(userId);
+        return ResponseEntity.ok(projectByUser);
     }
 }
