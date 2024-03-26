@@ -1,6 +1,7 @@
 package com.example.manager_app.service;
 
 import com.example.manager_app.dto.ProjectByUserRespone;
+import com.example.manager_app.dto.RoleByProjectRespone;
 import com.example.manager_app.dto.UserInfoResponse;
 import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Project;
@@ -93,7 +94,7 @@ public class UserService {
             Optional<Users> userOptional = userRepository.findById(userProject.getUsers().getId());
             if (userOptional.isPresent()) {
                 Users user = userOptional.get();
-                userProjectReponse.add(new UserProjectReponse(user.getUsername(), user.getEmail(), userProject.getRole()));
+                userProjectReponse.add(new UserProjectReponse(user.getId(),user.getUsername(), user.getEmail(), userProject.getRole()));
             }
         }
 
@@ -121,7 +122,7 @@ public class UserService {
         return list;
     }
 
-    public UserProjectReponse addUser(Users users, List<ProjectByUserRespone> projectList) {
+    public UserProjectReponse addUser(Users users, List<ProjectByUserRespone> projectList,String role) {
         Optional<Users> usersOptional = userRepository.findById(users.getId());
         List<User_Project> user_projects = null;
         if (usersOptional.isPresent()) {
@@ -144,7 +145,7 @@ public class UserService {
                     User_Project userProject = new User_Project();
                     userProject.setProject(projectOptional.get());
                     userProject.setUsers(users1);
-                    userProject.setRole(item.getRole());
+                    userProject.setRole(role);
                     projectToAdd.add(userProject);
                 }
             }
@@ -161,6 +162,9 @@ public class UserService {
             users1.setEmail(users.getEmail());
             if(!users.getGoogleId().isEmpty() && !users.getGoogleId().equalsIgnoreCase("")&& users.getGoogleId()!=null){
                 users1.setGoogleId(users.getGoogleId());
+            }
+            if(users1.getRole()==Role.ADMIN){
+                users1.setRole(Role.ADMIN);
             }
             users1.setRole(Role.USER);
             userRepository.save(users1);

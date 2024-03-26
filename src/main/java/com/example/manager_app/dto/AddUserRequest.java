@@ -8,6 +8,7 @@ import java.util.List;
 public class AddUserRequest {
     private Users user;
     private List<ProjectByUserRespone> projects;
+    private String role;
 
     public AddUserRequest(Users user, List<ProjectByUserRespone> projects) {
         this.user = user;
@@ -31,5 +32,13 @@ public class AddUserRequest {
 
     public void setProjects(List<ProjectByUserRespone> projects) {
         this.projects = projects;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

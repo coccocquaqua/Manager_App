@@ -33,17 +33,10 @@ public class UserController {
     }
 
     @PostMapping
-//    public ResponseEntity<Users> postUsers(@RequestBody Users user) {
-//        // Mã hóa mật khẩu của người dùng trước khi lưu vào cơ sở dữ liệu
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        userRepository.save(user);
-//        return ResponseEntity.ok(user);
-//    }
-
     public ResponseEntity<UserProjectReponse> post(@RequestBody AddUserRequest userRequest) {
         Users users = userRequest.getUser();
         List<ProjectByUserRespone> projectList = userRequest.getProjects();
-        UserProjectReponse userProjectReponse = userService.addUser(users, projectList);
+        UserProjectReponse userProjectReponse = userService.addUser(users, projectList,userRequest.getRole());
         return ResponseEntity.ok(userProjectReponse);
     }
 

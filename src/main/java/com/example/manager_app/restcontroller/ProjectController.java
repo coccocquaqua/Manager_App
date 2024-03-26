@@ -1,8 +1,11 @@
 package com.example.manager_app.restcontroller;
 
+import com.example.manager_app.dto.AddProjectRequest;
+import com.example.manager_app.dto.AddUserRequest;
 import com.example.manager_app.dto.ProjectByUserRespone;
 import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Project;
+import com.example.manager_app.model.Users;
 import com.example.manager_app.repository.ProjectRepository;
 import com.example.manager_app.security.JwtUtils;
 import com.example.manager_app.security.UserDetailServiceImpl;
@@ -36,5 +39,12 @@ public class ProjectController {
     public ResponseEntity<?> getUserByProject(@PathVariable Integer userId) {
         List<ProjectByUserRespone> projectByUser = projectService.getProjectByUser(userId);
         return ResponseEntity.ok(projectByUser);
+    }
+    @PostMapping
+    public ResponseEntity<ProjectByUserRespone> post(@RequestBody AddProjectRequest projectRequest) {
+        Project project = projectRequest.getProject();
+        List<UserProjectReponse> usersList = projectRequest.getUsers();
+        ProjectByUserRespone projectByUserRespone = projectService.addUser(project, usersList,projectRequest.getRole());
+        return ResponseEntity.ok(projectByUserRespone);
     }
 }

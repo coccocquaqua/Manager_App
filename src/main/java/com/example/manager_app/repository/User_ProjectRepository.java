@@ -16,4 +16,5 @@ public interface User_ProjectRepository extends JpaRepository<User_Project, Inte
 
     @Transactional
     void deleteUser_ProjectByUsersIdAndProjectId(Integer userId, Integer projectId);
+
 }

@@ -13,6 +13,12 @@ public class ProjectByUserRespone {
         this.name = name;
     }
 
+    public ProjectByUserRespone(Integer id, String name, String role) {
+        this.id = id;
+        this.name = name;
+        this.role = role;
+    }
+
     public Integer getId() {
         return id;
     }

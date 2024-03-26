@@ -1,6 +1,7 @@
 package com.example.manager_app.dto;
 
 public class UserProjectReponse {
+    private Integer id;
     private String username;
     private String email;
     private String role;
@@ -9,6 +10,13 @@ public class UserProjectReponse {
     }
 
     public UserProjectReponse(String username, String email, String role) {
+        this.username = username;
+        this.email = email;
+        this.role = role;
+    }
+
+    public UserProjectReponse(Integer id, String username, String email, String role) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
@@ -36,5 +44,13 @@ public class UserProjectReponse {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
