@@ -7,25 +7,33 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "reiews")
+@Table(name = "reviews")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users employee;
+    @JoinColumn(name = "reviewer_id")
+    private Users userReviewer;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(nullable = false)
-    private int rating;
+    @ManyToOne
+    @JoinColumn(name = "retro_id")
+    private Retro retro;
 
-    @Column
+    @ManyToOne
+    @JoinColumn(name = "reviewee_id")
+    private Users userReviewee;
+
+    @Column(name = "")
     private String comment;
+
+    @Column(name = "rate")
+    private Double rate;
 
     @Column(name = "review_date")
     private LocalDate reviewDate;

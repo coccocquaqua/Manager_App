@@ -26,25 +26,39 @@ public class ProjectService {
     UserService userService;
     @Autowired
     UserRepository userRepository;
+
     public List<ProjectByUserRespone> getProjectByUser(Integer userId) {
         List<ProjectByUserRespone> projectByUserResponeList = new ArrayList<>();
         List<User_Project> user_projects = user_projectRepository.findUser_ProjectByUsersId(userId);
-        for (User_Project userProject:user_projects) {
-            Optional<Project> projectOptional=projectRepository.findById(userProject.getProject().getId());
-            if(projectOptional.isPresent()){
-                Project project=projectOptional.get();
-                projectByUserResponeList.add(new ProjectByUserRespone(project.getId(),project.getName(),userProject.getRole()));
+        for (User_Project userProject : user_projects) {
+            Optional<Project> projectOptional = projectRepository.findById(userProject.getProject().getId());
+            if (projectOptional.isPresent()) {
+                Project project = projectOptional.get();
+                projectByUserResponeList.add(new ProjectByUserRespone(project.getId(), project.getName(), userProject.getRole()));
             }
         }
         return projectByUserResponeList;
     }
+
+    public void deteleProject(Integer project) {
+        List<User_Project> userProjectList = user_projectRepository.findUser_ProjectByProjectId(project);
+        for (User_Project item : userProjectList) {
+            user_projectRepository.deleteById(item.getId());
+
+        }
+        projectRepository.deleteById(project);
+    }
+
     public ProjectByUserRespone addUser(Project project, List<UserProjectReponse> userList, String role) {
+        if (project.getId() == null) {
+            projectRepository.save(project);
+        }
         Optional<Project> projectOptional = projectRepository.findById(project.getId());
         List<User_Project> user_projects = null;
         if (projectOptional.isPresent()) {
             Project project1 = projectOptional.get();
             List<UserProjectReponse> userByProject = userService.getUserByProject(project1.getId());
-            System.out.println(userByProject+"hhh");
+            System.out.println(userByProject + "hhh");
             List<User_Project> projectToAdd = new ArrayList<>();
             List<Integer> projectToDelete = new ArrayList<>();
             //List<Project> projects = projectRepository.findAll();
@@ -81,8 +95,11 @@ public class ProjectService {
             user_projectRepository.saveAll(projectToAdd);
 
         }
+
         ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
+        projectByUserRespone.setId(project.getId());
         projectByUserRespone.setName(project.getName());
+        projectByUserRespone.setDescription(project.getDescription());
         for (User_Project item1 : user_projects) {
             if (item1.getProject() != null && item1.getProject().getId() != null && item1.getProject().getId() == project.getId()) {
                 projectByUserRespone.setRole(item1.getRole());

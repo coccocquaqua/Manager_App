@@ -27,12 +27,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
             throw new UsernameNotFoundException("User " + Username + " was not found in the database");
         }
-        System.out.println("Found user!" + Username);
+        System.out.println("Found user! " + Username);
         Users user = users.get();
         UserDetails userDetails;
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()));
         if (users.get().getGoogleId() != null && !users.get().getGoogleId().isEmpty()) {
-            userDetails = new User(users.get().getUsername(), "", authorities);
+            userDetails = new User(users.get().getUsername(),"", authorities);
             return userDetails;
         }
         userDetails = new User(users.get().getUsername(), users.get().getPassword(), authorities);

@@ -32,12 +32,16 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+//    @PostMapping
+//    public ResponseEntity<UserProjectReponse> post(@RequestBody AddUserRequest userRequest) {
+//        Users users = userRequest.getUser();
+//        List<ProjectByUserRespone> projectList = userRequest.getProjects();
+//        UserProjectReponse userProjectReponse = userService.addUser(users, projectList,userRequest.getRole());
+//        return ResponseEntity.ok(userProjectReponse);
+//    }
     @PostMapping
-    public ResponseEntity<UserProjectReponse> post(@RequestBody AddUserRequest userRequest) {
-        Users users = userRequest.getUser();
-        List<ProjectByUserRespone> projectList = userRequest.getProjects();
-        UserProjectReponse userProjectReponse = userService.addUser(users, projectList,userRequest.getRole());
-        return ResponseEntity.ok(userProjectReponse);
+    public ResponseEntity<UserProjectReponse>post(@RequestBody Users users){
+        return ResponseEntity.ok(userService.addUser(users));
     }
 
     @GetMapping("/filter-project/{projectId}")

@@ -47,4 +47,10 @@ public class ProjectController {
         ProjectByUserRespone projectByUserRespone = projectService.addUser(project, usersList,projectRequest.getRole());
         return ResponseEntity.ok(projectByUserRespone);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUsers(@PathVariable Integer id) {
+        projectService.deteleProject(id);
+        return ResponseEntity.ok().build();
+    }
 }

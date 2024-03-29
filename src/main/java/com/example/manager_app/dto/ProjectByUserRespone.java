@@ -3,6 +3,7 @@ package com.example.manager_app.dto;
 public class ProjectByUserRespone {
     private Integer id;
     private String name;
+    private String description;
     private String role;
 
     public ProjectByUserRespone() {
@@ -41,5 +42,13 @@ public class ProjectByUserRespone {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

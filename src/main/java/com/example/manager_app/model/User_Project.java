@@ -3,6 +3,7 @@ package com.example.manager_app.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -10,7 +11,7 @@ import javax.persistence.*;
 public class User_Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -20,6 +21,6 @@ public class User_Project {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(nullable = false)
+    @Column(name = "role")
     private String role;
 }

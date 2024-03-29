@@ -46,7 +46,7 @@ public class LoginController {
     UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody JwtRequest jwtRequest) throws Exception {
+    public ResponseEntity<?> login(@RequestBody JwtRequest jwtRequest) throws Exception,BadCredentialsException {
         try {
             Authentication authentication = authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -57,8 +57,8 @@ public class LoginController {
             return ResponseEntity.ok(userInfoResponse);
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+//        } catch (BadCredentialsException e) {
+//            throw new Exception("INVALID_CREDENTIALS", e);
         }
     }
 
@@ -133,5 +133,4 @@ public class LoginController {
 
         }
 
-    }
-}
+    }}
