@@ -34,7 +34,6 @@ public class ReviewService {
             ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
             reviewResponse.setNameUserReviewer(item.getUserReviewer().getUsername());
             reviewResponse.setNameUserReviewee(item.getUserReviewee().getUsername());
-            reviewResponse.setNameProject(item.getProject().getName());
             reviewResponse.setNameRetro(item.getRetro().getName());
             list.add(reviewResponse);
         }
@@ -46,19 +45,18 @@ public class ReviewService {
 //
 //    }
     //admin
-    public List<ReviewResponse> getReviewByProjectId(Integer projectId) {
-        List<Review> reviewList = reviewRepository.findReviewByProjectId(projectId);
-        List<ReviewResponse> list = new ArrayList<>();
-        for (Review item : reviewList) {
-            ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
-            reviewResponse.setNameUserReviewer(item.getUserReviewer().getUsername());
-            reviewResponse.setNameUserReviewee(item.getUserReviewee().getUsername());
-            reviewResponse.setNameProject(item.getProject().getName());
-            reviewResponse.setNameRetro(item.getRetro().getName());
-            list.add(reviewResponse);
-        }
-        return list;
-    }
+//    public List<ReviewResponse> getReviewByProjectId(Integer projectId) {
+//        List<Review> reviewList = reviewRepository.findReviewByProjectId(projectId);
+//        List<ReviewResponse> list = new ArrayList<>();
+//        for (Review item : reviewList) {
+//            ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
+//            reviewResponse.setNameUserReviewer(item.getUserReviewer().getUsername());
+//            reviewResponse.setNameUserReviewee(item.getUserReviewee().getUsername());
+//            reviewResponse.setNameRetro(item.getRetro().getName());
+//            list.add(reviewResponse);
+//        }
+//        return list;
+//    }
 
     //admin
     public List<ReviewResponse> getReviewByUserId(Integer userId) {
@@ -68,7 +66,6 @@ public class ReviewService {
             ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
             reviewResponse.setNameUserReviewer(item.getUserReviewer().getUsername());
             reviewResponse.setNameUserReviewee(item.getUserReviewee().getUsername());
-            reviewResponse.setNameProject(item.getProject().getName());
             reviewResponse.setNameRetro(item.getRetro().getName());
             list.add(reviewResponse);
         }
@@ -84,7 +81,6 @@ public class ReviewService {
             ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
             reviewResponse.setNameUserReviewer(item.getUserReviewer().getUsername());
             reviewResponse.setNameUserReviewee(item.getUserReviewee().getUsername());
-            reviewResponse.setNameProject(item.getProject().getName());
             reviewResponse.setNameRetro(item.getRetro().getName());
             list.add(reviewResponse);
         }

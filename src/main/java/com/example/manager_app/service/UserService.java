@@ -99,7 +99,7 @@ public class UserService {
             Optional<Users> userOptional = userRepository.findById(userProject.getUsers().getId());
             if (userOptional.isPresent()) {
                 Users user = userOptional.get();
-                userProjectReponse.add(new UserProjectReponse(user.getId(), user.getUsername(), user.getEmail(), userProject.getRole()));
+                userProjectReponse.add(new UserProjectReponse(user.getId(), user.getUsername(), user.getEmail(), userProject.getRole(),userProject.getStatus()));
             }
         }
 

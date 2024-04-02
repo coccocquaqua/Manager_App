@@ -17,9 +17,9 @@ public class Review {
     @JoinColumn(name = "reviewer_id")
     private Users userReviewer;
 
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+//    @ManyToOne
+//    @JoinColumn(name = "project_id")
+//    private Project project;
 
     @ManyToOne
     @JoinColumn(name = "retro_id")
@@ -29,7 +29,7 @@ public class Review {
     @JoinColumn(name = "reviewee_id")
     private Users userReviewee;
 
-    @Column(name = "")
+    @Column(name = "comment")
     private String comment;
 
     @Column(name = "rate")

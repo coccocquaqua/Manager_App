@@ -24,12 +24,12 @@ public class ReviewController {
         List<ReviewResponse> reviewResponses = reviewService.getAll();
         return ResponseEntity.ok(reviewResponses);
     }
-    @GetMapping("/project/{projectId}")
-
-    public ResponseEntity<?> getReviewByProject(@PathVariable Integer projectId) {
-        List<ReviewResponse> reviewResponses = reviewService.getReviewByProjectId(projectId);
-        return ResponseEntity.ok(reviewResponses);
-    }
+//    @GetMapping("/project/{projectId}")
+//
+//    public ResponseEntity<?> getReviewByProject(@PathVariable Integer projectId) {
+//        List<ReviewResponse> reviewResponses = reviewService.getReviewByProjectId(projectId);
+//        return ResponseEntity.ok(reviewResponses);
+//    }
     @GetMapping("/user/{userId}")
 
     public ResponseEntity<?> getReviewByUser(@PathVariable Integer userId) {

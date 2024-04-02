@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findReviewByUserReviewerId(Integer userId);
-    List<Review>findReviewByProjectId(Integer projectId);
+  //  List<Review>findReviewByProjectId(Integer projectId);
     List<Review>findReviewByReviewDate(LocalDate date);
 }

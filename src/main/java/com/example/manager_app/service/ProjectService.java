@@ -48,64 +48,118 @@ public class ProjectService {
         }
         projectRepository.deleteById(project);
     }
+    
 
-    public ProjectByUserRespone addUser(Project project, List<UserProjectReponse> userList, String role) {
-        if (project.getId() == null) {
-            projectRepository.save(project);
-        }
-        Optional<Project> projectOptional = projectRepository.findById(project.getId());
-        List<User_Project> user_projects = null;
-        if (projectOptional.isPresent()) {
-            Project project1 = projectOptional.get();
-            List<UserProjectReponse> userByProject = userService.getUserByProject(project1.getId());
-            System.out.println(userByProject + "hhh");
-            List<User_Project> projectToAdd = new ArrayList<>();
-            List<Integer> projectToDelete = new ArrayList<>();
-            //List<Project> projects = projectRepository.findAll();
-            user_projects = user_projectRepository.findAll();
-            // lọc ra các user cần thêm
-            for (UserProjectReponse item : userList) {
-                for (UserProjectReponse item1 : userByProject) {
-                    if (item.getId() == item1.getId()) {
-                        continue;
-                    }
+//    public ProjectByUserRespone addUser(Project project, List<UserProjectReponse> userList, String role) {
+//        if (project.getId() == null) {
+//            projectRepository.save(project);
+//        }
+//
+//        Optional<Project> projectOptional = projectRepository.findById(project.getId());
+//        if (projectOptional.isPresent()) {
+//            Project project1 = projectOptional.get();
+//
+//            // Lấy danh sách người dùng hiện tại của dự án từ cơ sở dữ liệu
+//            List<User_Project> userProjectsInDB = user_projectRepository.findUser_ProjectByProjectId(project1.getId());
+//
+//            List<User_Project> projectToAdd = new ArrayList<>();
+//            List<Integer> projectToDelete = new ArrayList<>();
+//
+//            // Duyệt qua danh sách người dùng truyền vào từ client
+//            for (UserProjectReponse userFromClient : userList) {
+//                boolean userExistsInDB = false;
+//
+//                // Kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu không
+//                for (User_Project userProjectInDB : userProjectsInDB) {
+//                    if (userProjectInDB.getUsers().getId().equals(userFromClient.getId())) {
+//                        userExistsInDB = true;
+//                        break;
+//                    }
+//                }
+//
+//                // Nếu người dùng không tồn tại trong cơ sở dữ liệu, thêm vào danh sách để thêm mới
+//                if (!userExistsInDB) {
+//                    Optional<Users> userOptional = userRepository.findById(userFromClient.getId());
+//                    if (userOptional.isPresent()) {
+//                        Users user = userOptional.get();
+//                        User_Project newUserProject = new User_Project();
+//                        newUserProject.setProject(project1);
+//                        newUserProject.setUsers(user);
+//                        newUserProject.setRole(role);
+//                        newUserProject.setStatus(1);
+//                        projectToAdd.add(newUserProject);
+//                    }
+//                }
+//            }
+//
+//            // Xóa các người dùng không được truyền vào từ client
+//            for (User_Project userProjectInDB : userProjectsInDB) {
+//                boolean userExistsInClientList = false;
+//                for (UserProjectReponse userFromClient : userList) {
+//                    if (userProjectInDB.getUsers().getId().equals(userFromClient.getId())) {
+//                        userExistsInClientList = true;
+//                        break;
+//                    }
+//                }
+//
+//                // Nếu người dùng không tồn tại trong danh sách từ client, cập nhật status thành 0
+//                if (!userExistsInClientList) {
+//                    projectToDelete.add(userProjectInDB.getUsers().getId());
+//                }else {
+//                    projectToDelete.add(userProjectInDB.getUsers().getId());
+//                }
+//            }
+//
+//            // Cập nhật status của người dùng
+//            for (Integer userProjectId : projectToDelete) {
+//                boolean userExistsInClientList = false;
+//
+//                // Kiểm tra xem người dùng có tồn tại trong danh sách client không
+//                for (UserProjectReponse userFromClient : userList) {
+//                    if (userFromClient.getId().equals(userProjectId)) {
+//                        userExistsInClientList = true;
+//                        break;
+//                    }
+//                }
+//
+//                // Nếu user không tồn tại trong danh sách client, cập nhật status thành 0
+//                if (!userExistsInClientList) {
+//                    user_projectRepository.updateStatusByUsersIdAndProjectId(0, userProjectId,project.getId());
+//
+//                }
+//
+//                // Ngược lại, cập nhật status thành 1
+//                else {
+//                user_projectRepository.updateStatusByUsersIdAndProjectId(1, userProjectId,project.getId());
+//                    System.out.println(userProjectId);
+//                }
+//            }
+//            // Lưu các người dùng mới vào cơ sở dữ liệu
+//            user_projectRepository.saveAll(projectToAdd);
+//
+//            // Cập nhật thông tin dự án
+//            project1.setName(project.getName());
+//            project1.setDescription(project.getDescription());
+//            projectRepository.save(project1);
+//
+//            // Tạo đối tượng response
+//            ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
+//            projectByUserRespone.setId(project.getId());
+//            projectByUserRespone.setName(project.getName());
+//            projectByUserRespone.setDescription(project.getDescription());
+//
+//            // Tìm vai trò của người dùng trong dự án và thêm vào response
+//            for (User_Project userProject : userProjectsInDB) {
+//                if (userProject.getProject() != null && userProject.getProject().getId() != null && userProject.getProject().getId() == project.getId()) {
+//                    projectByUserRespone.setRole(userProject.getRole());
+//                    break;
+//                }
+//            }
+//            return projectByUserRespone;
+//        } else {
+//            // Trả về null nếu không tìm thấy dự án
+//            return null;
+//        }
+//    }
 
-                }
-                Optional<Users> usersOptional = userRepository.findById(item.getId());
-                if (projectOptional.isPresent()) {
-                    User_Project userProject = new User_Project();
-                    userProject.setProject(project1);
-                    userProject.setUsers(usersOptional.get());
-                    userProject.setRole(role);
-                    projectToAdd.add(userProject);
-                }
-            }
-            for (UserProjectReponse item : userByProject) {
-                System.out.println(item);
-                projectToDelete.add(item.getId());
-            }
-            for (Integer item : projectToDelete) {
-                System.out.println(project1.getId());
-                System.out.println(item);
-                user_projectRepository.deleteUser_ProjectByUsersIdAndProjectId(item, project.getId());
-            }
-            project1.setName(project.getName());
-            project1.setDescription(project.getDescription());
-            projectRepository.save(project1);
-            user_projectRepository.saveAll(projectToAdd);
-
-        }
-
-        ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
-        projectByUserRespone.setId(project.getId());
-        projectByUserRespone.setName(project.getName());
-        projectByUserRespone.setDescription(project.getDescription());
-        for (User_Project item1 : user_projects) {
-            if (item1.getProject() != null && item1.getProject().getId() != null && item1.getProject().getId() == project.getId()) {
-                projectByUserRespone.setRole(item1.getRole());
-                break;
-            }
-        }
-        return projectByUserRespone;
-    }
 }

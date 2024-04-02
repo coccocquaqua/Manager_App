@@ -23,4 +23,7 @@ public class User_Project {
 
     @Column(name = "role")
     private String role;
+
+    @Column(name = "status")
+    private int status;
 }
