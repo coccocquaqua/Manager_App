@@ -4,6 +4,8 @@ public class ProjectByUserRespone {
     private Integer id;
     private String name;
     private String description;
+    private String username;
+    private String status;
     private String role;
 
     public ProjectByUserRespone() {
@@ -17,6 +19,15 @@ public class ProjectByUserRespone {
     public ProjectByUserRespone(Integer id, String name, String role) {
         this.id = id;
         this.name = name;
+        this.role = role;
+    }
+
+    public ProjectByUserRespone(Integer id, String name, String description, String username, String status, String role) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.username = username;
+        this.status = status;
         this.role = role;
     }
 
@@ -50,5 +61,21 @@ public class ProjectByUserRespone {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String username) {
+        this.username = username;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

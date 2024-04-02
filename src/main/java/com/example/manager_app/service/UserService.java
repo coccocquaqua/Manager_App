@@ -94,12 +94,14 @@ public class UserService {
         // Optional<Project> project1 = projectRepository.findById(projectId);
         List<UserProjectReponse> userProjectReponse = new ArrayList<>();
         List<User_Project> user_projects = user_projectRepository.findUser_ProjectByProjectId(projectId);
+        Optional<Project> projectOptional=projectRepository.findById(projectId);
+        Project project =projectOptional.get();
         System.out.println("kkk" + user_projects);
         for (User_Project userProject : user_projects) {
             Optional<Users> userOptional = userRepository.findById(userProject.getUsers().getId());
             if (userOptional.isPresent()) {
                 Users user = userOptional.get();
-                userProjectReponse.add(new UserProjectReponse(user.getId(), user.getUsername(), user.getEmail(), userProject.getRole(),userProject.getStatus()));
+                userProjectReponse.add(new UserProjectReponse(user.getId(), user.getUsername(), user.getEmail(),project.getName() ,userProject.getRole(),userProject.getStatus1()));
             }
         }
 

@@ -26,4 +26,11 @@ public class User_Project {
 
     @Column(name = "status")
     private int status;
+  public  String getStatus1(){
+        if(this.status==0){
+            return "không hoạt động";
+        }else  {
+            return "đang hoạt động";
+        }
+    }
 }
