@@ -4,10 +4,7 @@ import com.example.manager_app.model.Retro;
 import com.example.manager_app.service.RetroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +17,11 @@ public class RetroController {
     @GetMapping("/end-date")
     public ResponseEntity<?> getInProgressReviews() {
         List<Retro>list=retroService.getRetroByEndDate();
+        return ResponseEntity.ok(list);
+    }
+    @GetMapping("/retro/{projectId}")
+    public ResponseEntity<?> getRetroByProjectAndDate(@PathVariable Integer projectId ) {
+        List<Retro>list=retroService.getRetroByProjectIdAndDate(projectId);
         return ResponseEntity.ok(list);
     }
 }

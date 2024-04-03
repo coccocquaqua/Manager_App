@@ -53,7 +53,8 @@ public class ProjectService {
     }
 
 
-    public ProjectByUserRespone addUser(Project project, List<UserProjectReponse> userList, String role) {
+    public List<ProjectByUserRespone> addUser(Project project, List<UserProjectReponse> userList, String role) {
+        List<ProjectByUserRespone> responseList = new ArrayList<>();
         if (project.getId() == null) {
             projectRepository.save(project);
         }
@@ -108,7 +109,7 @@ public class ProjectService {
                 // Nếu người dùng không tồn tại trong danh sách từ client, cập nhật status thành 0
                 if (!userExistsInClientList) {
                     projectToDelete.add(userProjectInDB.getUsers().getId());
-                }else {
+                } else {
                     projectToDelete.add(userProjectInDB.getUsers().getId());
                 }
             }
@@ -127,13 +128,13 @@ public class ProjectService {
 
                 // Nếu user không tồn tại trong danh sách client, cập nhật status thành 0
                 if (!userExistsInClientList) {
-                    user_projectRepository.updateStatusByUsersIdAndProjectId(0, userProjectId,project.getId());
+                    user_projectRepository.updateStatusByUsersIdAndProjectId(0, userProjectId, project.getId());
 
                 }
 
                 // Ngược lại, cập nhật status thành 1
                 else {
-                user_projectRepository.updateStatusByUsersIdAndProjectId(1, userProjectId,project.getId());
+                    user_projectRepository.updateStatusByUsersIdAndProjectId(1, userProjectId, project.getId());
                     System.out.println(userProjectId);
                 }
             }
@@ -145,24 +146,27 @@ public class ProjectService {
             project1.setDescription(project.getDescription());
             projectRepository.save(project1);
 
-            // Tạo đối tượng response
-            ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
-            projectByUserRespone.setId(project.getId());
-            projectByUserRespone.setName(project.getName());
-            projectByUserRespone.setDescription(project.getDescription());
-
             // Tìm vai trò của người dùng trong dự án và thêm vào response
             for (User_Project userProject : userProjectsInDB) {
-                if (userProject.getProject() != null && userProject.getProject().getId() != null && userProject.getProject().getId() == project.getId()) {
-                    projectByUserRespone.setRole(userProject.getRole());
-                    break;
+                if(userProject.getStatus()==1){
+                    // Tạo đối tượng response
+                    ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
+                    projectByUserRespone.setId(project.getId());
+                    projectByUserRespone.setName(project.getName());
+                    projectByUserRespone.setDescription(project.getDescription());
+                    if (userProject.getProject() != null && userProject.getProject().getId() != null && userProject.getProject().getId() == project.getId()) {
+                        projectByUserRespone.setRole(userProject.getRole());
+                        projectByUserRespone.setStatus(userProject.getStatus1());
+                        projectByUserRespone.setUserName(userProject.getUsers().getUsername());
+                    }
+                    responseList.add(projectByUserRespone);
                 }
+
             }
-            return projectByUserRespone;
-        } else {
-            // Trả về null nếu không tìm thấy dự án
-            return null;
+
         }
+
+        return responseList;
     }
 
 }

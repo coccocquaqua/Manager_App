@@ -41,10 +41,10 @@ public class ProjectController {
         return ResponseEntity.ok(projectByUser);
     }
     @PostMapping
-    public ResponseEntity<ProjectByUserRespone> post(@RequestBody AddProjectRequest projectRequest) {
+    public ResponseEntity<?> post(@RequestBody AddProjectRequest projectRequest) {
         Project project = projectRequest.getProject();
         List<UserProjectReponse> usersList = projectRequest.getUsers();
-        ProjectByUserRespone projectByUserRespone = projectService.addUser(project, usersList,projectRequest.getRole());
+        List<ProjectByUserRespone> projectByUserRespone = projectService.addUser(project, usersList,projectRequest.getRole());
         return ResponseEntity.ok(projectByUserRespone);
     }
 

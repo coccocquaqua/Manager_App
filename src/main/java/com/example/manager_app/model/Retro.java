@@ -16,9 +16,9 @@ public class Retro {
     @Column(name = "name")
     private String name;
 
-//    @ManyToOne
-//    @JoinColumn(name = "project_id")
-//    private Project project;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @Column(name = "start_date")
     private LocalDate startDate;
