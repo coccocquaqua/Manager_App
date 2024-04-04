@@ -5,6 +5,8 @@ import com.example.manager_app.model.Retro;
 import com.example.manager_app.repository.ProjectRepository;
 import com.example.manager_app.repository.RetroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +22,11 @@ public class RetroService {
     @Autowired
     ProjectRepository projectRepository;
 
+    public Page<Retro> getAll(Pageable pageable) {
+        Page<Retro> retro = retroRepository.findAll(pageable);
+        return retro;
+    }
+
     public List<Retro> getRetroByEndDate() {
         LocalDate currentDate = LocalDate.now();
         List<Retro> allRetro = retroRepository.findAll();
@@ -29,16 +36,22 @@ public class RetroService {
                 .collect(Collectors.toList());
         return list;
     }
-   public List<Retro> getRetroByProjectIdAndDate(Integer projectId) {
-       LocalDate currentDate = LocalDate.now();
-        List<Retro>retroList=getRetroByEndDate();
-        List<Retro>list=new ArrayList<>();
-       for (Retro retro : retroList) {
-           if (retro.getProject().getId().equals(projectId) && retro.getEndDate().isAfter(currentDate)) {
-               list.add(retro);
-           }
-       }
 
-       return list;
-   }
+    public List<Retro> getRetroByProjectIdAndDate(Integer projectId) {
+        LocalDate currentDate = LocalDate.now();
+        List<Retro> retroList = getRetroByEndDate();
+        List<Retro> list = new ArrayList<>();
+        for (Retro retro : retroList) {
+            if (retro.getProject().getId().equals(projectId) && retro.getEndDate().isAfter(currentDate)) {
+                list.add(retro);
+            }
+        }
+
+        return list;
+    }
+
+    public Retro addRetro(Retro retro) {
+        Retro retro1= retroRepository.save(retro);
+        return retro1;
+    }
 }

@@ -5,9 +5,8 @@ public class ProjectByUserRespone {
     private String name;
     private String description;
     private String username;
-    private String status;
     private String role;
-
+    private String status;
     public ProjectByUserRespone() {
     }
 
@@ -22,13 +21,13 @@ public class ProjectByUserRespone {
         this.role = role;
     }
 
-    public ProjectByUserRespone(Integer id, String name, String description, String username, String status, String role) {
+    public ProjectByUserRespone(Integer id, String name, String description, String username, String role, String status) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.username = username;
-        this.status = status;
         this.role = role;
+        this.status = status;
     }
 
     public Integer getId() {

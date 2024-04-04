@@ -11,6 +11,9 @@ import com.example.manager_app.security.JwtUtils;
 import com.example.manager_app.security.UserDetailServiceImpl;
 import com.example.manager_app.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,22 +32,35 @@ public class ProjectController {
     private JwtUtils jwtUtils;
     @Autowired
     private ProjectService projectService;
+
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
-    public ResponseEntity<?> getAllPage() {
-        List<Project> projects = projectRepository.findAll();
+    public ResponseEntity<?> getAllPage(@RequestParam(defaultValue = "1") int page) {
+        if (page < 1) page = 1;
+        int pageNumber = page - 1;
+        int pageSize = 1;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ProjectByUserRespone> projects = projectService.getAllPage(pageable);
         return ResponseEntity.ok(projects);
     }
+
+    @GetMapping("getall")
+    public ResponseEntity<?> getAllPage() {
+        List<Project> projects = projectService.getAll();
+        return ResponseEntity.ok(projects);
+    }
+
     @GetMapping("/filter-user/{userId}")
     public ResponseEntity<?> getUserByProject(@PathVariable Integer userId) {
         List<ProjectByUserRespone> projectByUser = projectService.getProjectByUser(userId);
         return ResponseEntity.ok(projectByUser);
     }
+
     @PostMapping
     public ResponseEntity<?> post(@RequestBody AddProjectRequest projectRequest) {
         Project project = projectRequest.getProject();
         List<UserProjectReponse> usersList = projectRequest.getUsers();
-        List<ProjectByUserRespone> projectByUserRespone = projectService.addUser(project, usersList,projectRequest.getRole());
+        List<ProjectByUserRespone> projectByUserRespone = projectService.addUser(project, usersList, projectRequest.getRole());
         return ResponseEntity.ok(projectByUserRespone);
     }
 

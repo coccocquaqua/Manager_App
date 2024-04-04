@@ -13,6 +13,9 @@ import com.example.manager_app.repository.ReviewRepository;
 import com.example.manager_app.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +46,9 @@ public class ReviewService {
     }
 
     //admin
-    public List<ReviewResponse> getAll() {
+    public Page<ReviewResponse> getAll(Pageable pageable) {
         //List<Review>reviewByUsersIs=reviewRepository.findReviewByUsersId(userId);
-        List<Review> reviewList = reviewRepository.findAll();
+        Page<Review> reviewList = reviewRepository.findAll(pageable);
         List<ReviewResponse> list = new ArrayList<>();
         for (Review item : reviewList) {
             ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
@@ -54,7 +57,7 @@ public class ReviewService {
             reviewResponse.setNameRetro(item.getRetro().getName());
             list.add(reviewResponse);
         }
-        return list;
+        return new PageImpl<>(list, pageable, reviewList.getTotalElements());
     }
 
     //admin

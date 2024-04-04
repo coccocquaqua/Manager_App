@@ -1,11 +1,17 @@
 package com.example.manager_app.restcontroller;
 
+import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Retro;
+import com.example.manager_app.model.Users;
 import com.example.manager_app.service.RetroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -14,6 +20,17 @@ import java.util.List;
 public class RetroController {
     @Autowired
     RetroService retroService;
+
+
+    @GetMapping()
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") int page) {
+        if (page < 1) page = 1;
+        int pageNumber = page - 1;
+        int pageSize = 1;
+        Pageable pageable = PageRequest.of(pageNumber,pageSize);
+        Page<Retro> list=retroService.getAll(pageable);
+        return ResponseEntity.ok(list);
+    }
     @GetMapping("/end-date")
     public ResponseEntity<?> getInProgressReviews() {
         List<Retro>list=retroService.getRetroByEndDate();
@@ -23,5 +40,9 @@ public class RetroController {
     public ResponseEntity<?> getRetroByProjectAndDate(@PathVariable Integer projectId ) {
         List<Retro>list=retroService.getRetroByProjectIdAndDate(projectId);
         return ResponseEntity.ok(list);
+    }
+    @PostMapping
+    public ResponseEntity<Retro>post(@RequestBody Retro retro){
+        return ResponseEntity.ok(retroService.addRetro(retro));
     }
 }

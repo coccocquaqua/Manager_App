@@ -16,6 +16,9 @@ import com.example.manager_app.security.UserDetailServiceImpl;
 import com.mysql.cj.conf.PropertyKey;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -110,28 +113,30 @@ public class UserService {
     }
 
 
-    public List<UserProjectReponse> getAll() {
-        List<Users> users = userRepository.findAll();
+    public Page<UserProjectReponse> getAllPage(Pageable pageable) {
+        Page<Users> users = userRepository.findAll(pageable);
         List<User_Project> userProjects = user_projectRepository.findAll();
         List<UserProjectReponse> list = new ArrayList<>();
         for (Users item : users) {
             UserProjectReponse userProjectReponse = new UserProjectReponse();
+            userProjectReponse.setId(item.getId());
             userProjectReponse.setUsername(item.getUsername());
             userProjectReponse.setEmail(item.getEmail());
             for (User_Project item1 : userProjects) {
                 if (item1.getUsers().getId() == item.getId()) {
+                    userProjectReponse.setProject(item1.getProject().getName());
                     userProjectReponse.setRole(item1.getRole());
                     break;
                 }
             }
             list.add(userProjectReponse);
         }
-        return list;
+        return new PageImpl<>(list, pageable, users.getTotalElements());
     }
 
-//    List<UserProjectReponse> getAllByReviewerId() {
-//
-//    }
+   public List<Users> getAll() {
+        return userRepository.findAll();
+    }
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);

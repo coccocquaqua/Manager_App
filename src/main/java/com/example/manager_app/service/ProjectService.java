@@ -2,14 +2,14 @@ package com.example.manager_app.service;
 
 import com.example.manager_app.dto.ProjectByUserRespone;
 import com.example.manager_app.dto.UserProjectReponse;
-import com.example.manager_app.model.Project;
-import com.example.manager_app.model.Role;
-import com.example.manager_app.model.User_Project;
-import com.example.manager_app.model.Users;
+import com.example.manager_app.model.*;
 import com.example.manager_app.repository.ProjectRepository;
 import com.example.manager_app.repository.UserRepository;
 import com.example.manager_app.repository.User_ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +26,32 @@ public class ProjectService {
     UserService userService;
     @Autowired
     UserRepository userRepository;
+
+
+    public List<Project>getAll(){
+        return projectRepository.findAll();
+    }
+    public Page<ProjectByUserRespone> getAllPage(Pageable pageable){
+        Page<Project> projects = projectRepository.findAll(pageable);
+        List<User_Project> userProjects = user_projectRepository.findAll();
+        List<ProjectByUserRespone> list = new ArrayList<>();
+        for (Project item : projects) {
+            ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
+            projectByUserRespone.setId(item.getId());
+            projectByUserRespone.setName(item.getName());
+            projectByUserRespone.setDescription(item.getDescription());
+            for (User_Project item1 : userProjects) {
+                if (item1.getProject().getId() == item.getId()) {
+                    projectByUserRespone.setUserName(item1.getUsers().getUsername());
+                    projectByUserRespone.setRole(item1.getRole());
+                    projectByUserRespone.setStatus(item1.getStatus1());
+                    break;
+                }
+            }
+            list.add(projectByUserRespone);
+        }
+        return new PageImpl<>(list, pageable, projects.getTotalElements());
+    }
 
     public List<ProjectByUserRespone> getProjectByUser(Integer userId) {
         List<ProjectByUserRespone> projectByUserResponeList = new ArrayList<>();
