@@ -57,4 +57,10 @@ public class ReviewController {
         ReviewResponse reviewResponses = reviewService.addReviewUser(review);
         return ResponseEntity.ok(reviewResponses);
     }
+    @GetMapping("/getall-user/{userId}")
+
+    public ResponseEntity<?> getReviewUser(@PathVariable Integer userId) {
+        List<ReviewResponse> reviewResponses = reviewService.getReviewByReviewerId(userId);
+        return ResponseEntity.ok(reviewResponses);
+    }
 }

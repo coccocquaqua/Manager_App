@@ -136,4 +136,30 @@ public class ReviewService {
 //            }
        return null;
     }
+    //user
+    public List<ReviewResponse> getReviewUser(Integer userId) {
+        List<ReviewResponse>list=new ArrayList<>();
+        LocalDate reviewDate = LocalDate.now(); // Lấy ngày hiện tại
+        List<ProjectByUserRespone> userProjectReponseList = projectService.getProjectByUser(userId);
+        for (ProjectByUserRespone item : userProjectReponseList) {
+            List<Retro> retroList = retroService.getRetroByProjectIdAndDate(item.getId());
+            for (Retro item1 : retroList) {
+                List<Review> reviewList = reviewRepository.findReviewByRetroId(item1.getId());
+                for (Review item2 : reviewList) {
+                    if(item2.getUserReviewer().getId()==userId){
+                        ReviewResponse reviewResponse = modelMapper.map(item2, ReviewResponse.class);
+                        reviewResponse.setNameUserReviewer(item.getUserName());
+                        Optional<Users>usersOptional=userRepository.findById(userId);
+                        Users users=usersOptional.get();
+                        reviewResponse.setNameUserReviewee(users.getUsername());
+                        reviewResponse.setNameRetro(item1.getName());
+                        list.add(reviewResponse);
+
+                    }
+
+                }
+            }
+        }
+        return list;
+    }
 }
