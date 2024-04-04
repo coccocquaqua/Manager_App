@@ -78,8 +78,8 @@ public class ReviewService {
     }
 
     //admin
-    public List<ReviewResponse> getReviewByUserId(Integer userId) {
-        List<Review> reviewList = reviewRepository.findReviewByUserReviewerId(userId);
+    public List<ReviewResponse> getReviewByReviewerId(Integer reviewerId) {
+        List<Review> reviewList = reviewRepository.findReviewByUserReviewerId(reviewerId);
         List<ReviewResponse> list = new ArrayList<>();
         for (Review item : reviewList) {
             ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
