@@ -45,4 +45,8 @@ public class RetroController {
     public ResponseEntity<Retro>post(@RequestBody Retro retro){
         return ResponseEntity.ok(retroService.addRetro(retro));
     }
+    @PutMapping
+    public ResponseEntity<Retro>put(@RequestBody Retro retro){
+        return ResponseEntity.ok(retroService.updateRetro(retro));
+    }
 }

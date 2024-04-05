@@ -62,4 +62,13 @@ public class UserController {
         List<UserProjectReponse> userProjectReponse = userService.getUserByProject(projectId);
         return ResponseEntity.ok(userProjectReponse);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUsers(@PathVariable Integer id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping()
+    public ResponseEntity<?> updateUser(@RequestBody Users users) {
+        return ResponseEntity.ok(userService.updateUser(users));
+    }
 }

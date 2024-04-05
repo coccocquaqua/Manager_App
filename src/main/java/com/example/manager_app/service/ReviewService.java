@@ -137,7 +137,7 @@ public class ReviewService {
        return null;
     }
     //user
-    public List<ReviewResponse> getReviewUser(Integer userId) {
+    public Page<ReviewResponse> getReviewUser(Integer userId,Pageable pageable) {
         List<ReviewResponse>list=new ArrayList<>();
         LocalDate reviewDate = LocalDate.now(); // Lấy ngày hiện tại
         List<ProjectByUserRespone> userProjectReponseList = projectService.getProjectByUser(userId);
@@ -146,20 +146,22 @@ public class ReviewService {
             for (Retro item1 : retroList) {
                 List<Review> reviewList = reviewRepository.findReviewByRetroId(item1.getId());
                 for (Review item2 : reviewList) {
-                    if(item2.getUserReviewer().getId()==userId){
-                        ReviewResponse reviewResponse = modelMapper.map(item2, ReviewResponse.class);
-                        reviewResponse.setNameUserReviewer(item.getUserName());
-                        Optional<Users>usersOptional=userRepository.findById(userId);
-                        Users users=usersOptional.get();
-                        reviewResponse.setNameUserReviewee(users.getUsername());
-                        reviewResponse.setNameRetro(item1.getName());
-                        list.add(reviewResponse);
+                    List<ProjectByUserRespone> userProjectReponseList1 = projectService.getProjectByUser(item2.getUserReviewee().getId());
+                    for (ProjectByUserRespone item3:userProjectReponseList1) {
+                        if(item.getId()==item3.getId()){
+                            if(item2.getUserReviewer().getId()==userId){
+                                ReviewResponse reviewResponse = modelMapper.map(item2, ReviewResponse.class);
+                                reviewResponse.setNameUserReviewer(item.getUserName());
+                                reviewResponse.setNameUserReviewee(item2.getUserReviewee().getUsername());
+                                reviewResponse.setNameRetro(item1.getName());
+                                list.add(reviewResponse);
 
+                            }
+                        }
                     }
-
                 }
             }
         }
-        return list;
+        return new PageImpl<>(list, pageable, list.size());
     }
 }

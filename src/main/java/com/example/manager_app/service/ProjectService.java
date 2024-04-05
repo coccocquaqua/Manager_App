@@ -62,7 +62,7 @@ public class ProjectService {
             Optional<Project> projectOptional = projectRepository.findById(userProject.getProject().getId());
             if (projectOptional.isPresent()) {
                 Project project = projectOptional.get();
-              projectByUserResponeList.add(new ProjectByUserRespone(project.getId(), project.getName(), project.getDescription() ,users.getUsername(),userProject.getStatus1(),userProject.getRole()));
+              projectByUserResponeList.add(new ProjectByUserRespone(project.getId(), project.getName(), project.getDescription() ,users.getUsername(),userProject.getRole(),userProject.getStatus1()));
 
             }
         }

@@ -51,7 +51,16 @@ public class RetroService {
     }
 
     public Retro addRetro(Retro retro) {
-        Retro retro1= retroRepository.save(retro);
+        Retro retro1 = retroRepository.save(retro);
         return retro1;
+    }
+
+    public Retro updateRetro(Retro retro) {
+        Optional<Retro> optionalRetro = retroRepository.findById(retro.getId());
+        if (optionalRetro.isPresent()) {
+            Retro retro1 = retroRepository.save(retro);
+            return retro1;
+        }
+        return null;
     }
 }

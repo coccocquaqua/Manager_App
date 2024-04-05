@@ -59,8 +59,12 @@ public class ReviewController {
     }
     @GetMapping("/getall-user/{userId}")
 
-    public ResponseEntity<?> getReviewUser(@PathVariable Integer userId) {
-        List<ReviewResponse> reviewResponses = reviewService.getReviewByReviewerId(userId);
+    public ResponseEntity<?> getReviewUser(@PathVariable Integer userId,@RequestParam(defaultValue = "1") int page) {
+        if (page < 1) page = 1;
+        int pageNumber = page - 1;
+        int pageSize = 1;
+        Pageable pageable = PageRequest.of(pageNumber,pageSize);
+        Page<ReviewResponse> reviewResponses = reviewService.getReviewUser(userId,pageable);
         return ResponseEntity.ok(reviewResponses);
     }
 }

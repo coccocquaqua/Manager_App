@@ -145,7 +145,7 @@ public class UserService {
     public UserProjectReponse addUser(Users users) {
         String hashedPassword = encodePassword(users.getPassword());
         users.setPassword(hashedPassword);
-        users.setRole(Role.USER);
+        users.setRole(Role.valueOf(users.getRole().name()));
         if (users.getGoogleId() == null) {
             users.setGoogleId("");
         }
@@ -154,10 +154,33 @@ public class UserService {
         userProjectReponse.setId(users.getId());
         userProjectReponse.setUsername(users.getUsername());
         userProjectReponse.setEmail(users.getEmail());
-        userProjectReponse.setRole(Role.USER.name());
+        userProjectReponse.setRole(users.getRole().name());
         return userProjectReponse;
     }
+    public UserProjectReponse updateUser(Users users) {
+        Optional<Users>optionalUsers=userRepository.findById(users.getId());
+        if(optionalUsers.isPresent()){
+            Users users1=optionalUsers.get();
+            String hashedPassword = encodePassword(users.getPassword());
+            users1.setPassword(hashedPassword);
+            users1.setUsername(users.getUsername());
+            users1.setEmail(users.getEmail());
+            users1.setRole(Role.valueOf(users.getRole().name()));
+            if (users.getGoogleId() == null) {
+                users.setGoogleId("");
+            }
+            userRepository.save(users1);
+            UserProjectReponse userProjectReponse = new UserProjectReponse();
+            userProjectReponse.setId(users.getId());
+            userProjectReponse.setUsername(users.getUsername());
+            userProjectReponse.setEmail(users.getEmail());
+            userProjectReponse.setRole(users.getRole().name());
+            return userProjectReponse;
+        }else {
+            return null;
+        }
 
+    }
     public void deleteUser(Integer userId) {
         List<User_Project> userProjectList = user_projectRepository.findUser_ProjectByUsersId(userId);
         for (User_Project item : userProjectList) {
