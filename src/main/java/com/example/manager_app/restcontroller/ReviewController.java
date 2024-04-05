@@ -53,7 +53,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewResponses);
     }
     @PostMapping
-    public ResponseEntity<?> post(@RequestBody ReviewRequest review) {
+    public ResponseEntity<?> post(@RequestBody Review review) {
         ReviewResponse reviewResponses = reviewService.addReviewUser(review);
         return ResponseEntity.ok(reviewResponses);
     }

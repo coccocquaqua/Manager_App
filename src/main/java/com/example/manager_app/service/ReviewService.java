@@ -1,10 +1,7 @@
 package com.example.manager_app.service;
 
 import com.example.manager_app.dto.ProjectByUserRespone;
-import com.example.manager_app.dto.ReviewRequest;
 import com.example.manager_app.dto.ReviewResponse;
-import com.example.manager_app.dto.UserProjectReponse;
-import com.example.manager_app.model.Project;
 import com.example.manager_app.model.Retro;
 import com.example.manager_app.model.Review;
 import com.example.manager_app.model.Users;
@@ -20,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,11 +58,11 @@ public class ReviewService {
 
     //admin
     public List<ReviewResponse> getReviewByProjectId(Integer projectId) {
-        List<ReviewResponse>list=new ArrayList<>();
+        List<ReviewResponse> list = new ArrayList<>();
         List<Retro> retroList = retroRepository.findRetroByProjectId(projectId);
-        for (Retro item:retroList) {
-            List<Review>reviewList=reviewRepository.findReviewByRetroId(item.getId());
-            for (Review item1:reviewList) {
+        for (Retro item : retroList) {
+            List<Review> reviewList = reviewRepository.findReviewByRetroId(item.getId());
+            for (Review item1 : reviewList) {
                 ReviewResponse reviewResponse = modelMapper.map(item1, ReviewResponse.class);
                 reviewResponse.setNameUserReviewer(item1.getUserReviewer().getUsername());
                 reviewResponse.setNameUserReviewee(item1.getUserReviewee().getUsername());
@@ -105,40 +101,25 @@ public class ReviewService {
         }
         return list;
     }
-//user
-    public ReviewResponse addReviewUser(ReviewRequest review) {
-        LocalDate reviewDate = LocalDate.now(); // Lấy ngày hiện tại
-        List<ProjectByUserRespone> userProjectReponseList = projectService.getProjectByUser(review.getReviewerId().getId());
-        for (ProjectByUserRespone item : userProjectReponseList) {
-            List<Retro> retroList = retroService.getRetroByProjectIdAndDate(item.getId());
-            for (Retro item1 : retroList) {
-//                List<Review> reviewList = reviewRepository.findReviewByRetroId(review.getRetroId());
-//                for (Review item2 : reviewList) {
-                        if (review.getRevieweeId() != review.getReviewerId()){
-                            Review review1 = new Review();
-                            review1.setReviewDate(reviewDate);
-                            review1.setUserReviewer(review.getReviewerId());
-                            review1.setUserReviewee(review.getRevieweeId());
-                            review1.setRetro(item1);
-                            review1.setRate(review.getRate());
-                            review1.setComment(review.getComment());
-                            Review saveReview=reviewRepository.save(review1);
-                            ReviewResponse reviewResponse = modelMapper.map(saveReview, ReviewResponse.class);
-                            reviewResponse.setNameUserReviewer(item.getUserName());
-                            Optional<Users>usersOptional=userRepository.findById(review.getRevieweeId().getId());
-                            Users users=usersOptional.get();
-                            reviewResponse.setNameUserReviewee(users.getUsername());
-                            reviewResponse.setNameRetro(item1.getName());
-                            return reviewResponse;
-                        }
-                    }
-                }
-//            }
-       return null;
-    }
+
     //user
-    public Page<ReviewResponse> getReviewUser(Integer userId,Pageable pageable) {
-        List<ReviewResponse>list=new ArrayList<>();
+    public ReviewResponse addReviewUser(Review review) {
+        LocalDate reviewDate = LocalDate.now(); // Lấy ngày hiện tại
+        review.setReviewDate(reviewDate);
+        Review saveReview = reviewRepository.save(review);
+        ReviewResponse reviewResponse = modelMapper.map(saveReview, ReviewResponse.class);
+        Optional<Users>usersOptional=userRepository.findById(review.getUserReviewee().getId());
+        reviewResponse.setNameUserReviewer(usersOptional.get().getUsername());
+        Optional<Users>userOptional=userRepository.findById(review.getUserReviewee().getId());
+        reviewResponse.setNameUserReviewee(userOptional.get().getUsername());
+        Optional<Retro>retroOptional=retroRepository.findById(review.getRetro().getId());
+        reviewResponse.setNameRetro(retroOptional.get().getName());
+        return reviewResponse;
+    }
+
+    //user
+    public Page<ReviewResponse> getReviewUser(Integer userId, Pageable pageable) {
+        List<ReviewResponse> list = new ArrayList<>();
         LocalDate reviewDate = LocalDate.now(); // Lấy ngày hiện tại
         List<ProjectByUserRespone> userProjectReponseList = projectService.getProjectByUser(userId);
         for (ProjectByUserRespone item : userProjectReponseList) {
@@ -147,9 +128,9 @@ public class ReviewService {
                 List<Review> reviewList = reviewRepository.findReviewByRetroId(item1.getId());
                 for (Review item2 : reviewList) {
                     List<ProjectByUserRespone> userProjectReponseList1 = projectService.getProjectByUser(item2.getUserReviewee().getId());
-                    for (ProjectByUserRespone item3:userProjectReponseList1) {
-                        if(item.getId()==item3.getId()){
-                            if(item2.getUserReviewer().getId()==userId){
+                    for (ProjectByUserRespone item3 : userProjectReponseList1) {
+                        if (item.getId() == item3.getId()) {
+                            if (item2.getUserReviewer().getId() == userId) {
                                 ReviewResponse reviewResponse = modelMapper.map(item2, ReviewResponse.class);
                                 reviewResponse.setNameUserReviewer(item.getUserName());
                                 reviewResponse.setNameUserReviewee(item2.getUserReviewee().getUsername());
