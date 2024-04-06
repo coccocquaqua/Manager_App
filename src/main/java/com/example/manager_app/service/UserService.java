@@ -122,10 +122,11 @@ public class UserService {
             userProjectReponse.setId(item.getId());
             userProjectReponse.setUsername(item.getUsername());
             userProjectReponse.setEmail(item.getEmail());
+            userProjectReponse.setRole(item.getRole().name());
             for (User_Project item1 : userProjects) {
                 if (item1.getUsers().getId() == item.getId()) {
                     userProjectReponse.setProject(item1.getProject().getName());
-                    userProjectReponse.setRole(item1.getRole());
+                    //userProjectReponse.setRole(item1.getRole());
                     break;
                 }
             }
@@ -249,5 +250,4 @@ public class UserService {
 //        }
 //        return userProjectReponse;
 //    }
-
 }

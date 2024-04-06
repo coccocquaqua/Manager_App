@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -42,6 +43,11 @@ public class UserController {
     @GetMapping("getall")
     public ResponseEntity<?> getAllPage() {
         List<Users> users = userService.getAll();
+        return ResponseEntity.ok(users);
+    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getById(@PathVariable Integer userId) {
+        Optional<Users> users = userRepository.findById(userId);
         return ResponseEntity.ok(users);
     }
 //    @PostMapping
@@ -71,4 +77,5 @@ public class UserController {
     public ResponseEntity<?> updateUser(@RequestBody Users users) {
         return ResponseEntity.ok(userService.updateUser(users));
     }
+
 }

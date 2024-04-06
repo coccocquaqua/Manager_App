@@ -1,5 +1,6 @@
 package com.example.manager_app.service;
 
+import com.example.manager_app.dto.ProjectByIdResponse;
 import com.example.manager_app.dto.ProjectByUserRespone;
 import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.*;
@@ -77,7 +78,20 @@ public class ProjectService {
         }
         projectRepository.deleteById(project);
     }
-
+    public ProjectByIdResponse getById(Integer projectId){
+        Optional<Project>optionalProject=projectRepository.findById(projectId);
+        ProjectByIdResponse projectByUserRespone=new ProjectByIdResponse();
+        projectByUserRespone.setId(optionalProject.get().getId());
+        projectByUserRespone.setName(optionalProject.get().getName());
+        projectByUserRespone.setDescription(optionalProject.get().getDescription());
+        List<UserProjectReponse>listUser=userService.getUserByProject(projectId);
+        projectByUserRespone.setUsers(listUser);
+        List<User_Project> userProjectList = user_projectRepository.findUser_ProjectByProjectId(projectId);
+        for (User_Project item : userProjectList) {
+            projectByUserRespone.setRole(item.getRole());
+        }
+        return projectByUserRespone;
+    }
 
     public List<ProjectByUserRespone> addUser(Project project, List<UserProjectReponse> userList, String role) {
         List<ProjectByUserRespone> responseList = new ArrayList<>();

@@ -1,9 +1,6 @@
 package com.example.manager_app.restcontroller;
 
-import com.example.manager_app.dto.AddProjectRequest;
-import com.example.manager_app.dto.AddUserRequest;
-import com.example.manager_app.dto.ProjectByUserRespone;
-import com.example.manager_app.dto.UserProjectReponse;
+import com.example.manager_app.dto.*;
 import com.example.manager_app.model.Project;
 import com.example.manager_app.model.Users;
 import com.example.manager_app.repository.ProjectRepository;
@@ -19,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -48,6 +46,11 @@ public class ProjectController {
     public ResponseEntity<?> getAllPage() {
         List<Project> projects = projectService.getAll();
         return ResponseEntity.ok(projects);
+    }
+    @GetMapping("/{projectId}")
+    public ResponseEntity<?> getById(@PathVariable Integer projectId) {
+        ProjectByIdResponse project = projectService.getById(projectId);
+        return ResponseEntity.ok(project);
     }
 
     @GetMapping("/filter-user/{userId}")

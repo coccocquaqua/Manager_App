@@ -3,6 +3,7 @@ package com.example.manager_app.restcontroller;
 import com.example.manager_app.dto.JwtRequest;
 import com.example.manager_app.dto.MessageResponse;
 import com.example.manager_app.dto.UserInfoResponse;
+import com.example.manager_app.model.Users;
 import com.example.manager_app.repository.UserRepository;
 import com.example.manager_app.security.JwtUtils;
 import com.example.manager_app.security.UserDetailServiceImpl;
@@ -28,6 +29,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -53,7 +55,8 @@ public class LoginController {
             System.out.println("hihi" + userDetails);
             String token = jwtUtils.generateToken(userDetails);
             String refreshToken = jwtUtils.generateRefreshToken(userDetails);
-            UserInfoResponse userInfoResponse = new UserInfoResponse(userDetails.getUsername(), token, refreshToken);
+            Optional<Users> users=userRepository.findUsersByUsername(jwtRequest.getUsername());
+            UserInfoResponse userInfoResponse = new UserInfoResponse(users.get().getId(),userDetails.getUsername(), token, refreshToken);
             return ResponseEntity.ok(userInfoResponse);
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
@@ -133,4 +136,6 @@ public class LoginController {
 
         }
 
-    }}
+    }
+
+    }

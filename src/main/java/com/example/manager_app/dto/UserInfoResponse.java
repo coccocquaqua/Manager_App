@@ -1,6 +1,10 @@
 package com.example.manager_app.dto;
 
+import lombok.Data;
+
+@Data
 public class  UserInfoResponse {
+    private Integer userId;
     private String username;
     private String token;
     private String refreshToken;
@@ -9,6 +13,13 @@ public class  UserInfoResponse {
     }
 
     public UserInfoResponse(String username, String token, String refreshToken) {
+        this.username = username;
+        this.token = token;
+        this.refreshToken = refreshToken;
+    }
+
+    public UserInfoResponse(Integer userId, String username, String token, String refreshToken) {
+        this.userId = userId;
         this.username = username;
         this.token = token;
         this.refreshToken = refreshToken;
