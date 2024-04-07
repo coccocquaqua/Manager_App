@@ -85,7 +85,14 @@ public class ProjectService {
         projectByUserRespone.setName(optionalProject.get().getName());
         projectByUserRespone.setDescription(optionalProject.get().getDescription());
         List<UserProjectReponse>listUser=userService.getUserByProject(projectId);
-        projectByUserRespone.setUsers(listUser);
+        List<UserProjectReponse>list=new ArrayList<>();
+        for (UserProjectReponse item1:listUser) {
+            if(item1.getStatus().equalsIgnoreCase("đang hoạt động")){
+                list.add(item1);
+
+            }
+            projectByUserRespone.setUsers(list);
+        }
         List<User_Project> userProjectList = user_projectRepository.findUser_ProjectByProjectId(projectId);
         for (User_Project item : userProjectList) {
             projectByUserRespone.setRole(item.getRole());

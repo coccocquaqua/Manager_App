@@ -4,6 +4,7 @@ import com.example.manager_app.dto.*;
 import com.example.manager_app.model.Project;
 import com.example.manager_app.model.Review;
 import com.example.manager_app.model.Users;
+import com.example.manager_app.repository.ReviewRepository;
 import com.example.manager_app.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,14 +25,21 @@ import java.util.Optional;
 public class ReviewController {
     @Autowired
     ReviewService reviewService;
-    @GetMapping("")
+    @Autowired
+    ReviewRepository reviewRepository;
 
+    @GetMapping("getall")
+    public ResponseEntity<?> getAll() {
+        List<ReviewResponse> reviewResponses = reviewService.getAll();
+        return ResponseEntity.ok(reviewResponses);
+    }
+    @GetMapping("")
     public ResponseEntity<?> getAllPage(@RequestParam(defaultValue = "1") int page) {
         if (page < 1) page = 1;
         int pageNumber = page - 1;
         int pageSize = 1;
         Pageable pageable = PageRequest.of(pageNumber,pageSize);
-        Page<ReviewResponse> reviewResponses = reviewService.getAll(pageable);
+        Page<ReviewResponse> reviewResponses = reviewService.getAllPage(pageable);
         return ResponseEntity.ok(reviewResponses);
     }
     @GetMapping("/project/{projectId}")
@@ -60,12 +68,8 @@ public class ReviewController {
     }
     @GetMapping("/getall-user/{userId}")
 
-    public ResponseEntity<?> getReviewUser(@PathVariable Integer userId,@RequestParam(defaultValue = "1") int page) {
-        if (page < 1) page = 1;
-        int pageNumber = page - 1;
-        int pageSize = 1;
-        Pageable pageable = PageRequest.of(pageNumber,pageSize);
-        Page<ReviewResponse> reviewResponses = reviewService.getReviewUser(userId,pageable);
+    public ResponseEntity<?> getReviewUser(@PathVariable Integer userId) {
+        List<ReviewResponse> reviewResponses = reviewService.getReviewUser(userId);
         return ResponseEntity.ok(reviewResponses);
     }
 }

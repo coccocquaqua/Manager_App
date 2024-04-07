@@ -42,7 +42,7 @@ public class ReviewService {
     }
 
     //admin
-    public Page<ReviewResponse> getAll(Pageable pageable) {
+    public Page<ReviewResponse> getAllPage(Pageable pageable) {
         //List<Review>reviewByUsersIs=reviewRepository.findReviewByUsersId(userId);
         Page<Review> reviewList = reviewRepository.findAll(pageable);
         List<ReviewResponse> list = new ArrayList<>();
@@ -55,7 +55,19 @@ public class ReviewService {
         }
         return new PageImpl<>(list, pageable, reviewList.getTotalElements());
     }
-
+    public List<ReviewResponse> getAll() {
+        //List<Review>reviewByUsersIs=reviewRepository.findReviewByUsersId(userId);
+        List<Review> reviewList = reviewRepository.findAll();
+        List<ReviewResponse> list = new ArrayList<>();
+        for (Review item : reviewList) {
+            ReviewResponse reviewResponse = modelMapper.map(item, ReviewResponse.class);
+            reviewResponse.setNameUserReviewer(item.getUserReviewer().getUsername());
+            reviewResponse.setNameUserReviewee(item.getUserReviewee().getUsername());
+            reviewResponse.setNameRetro(item.getRetro().getName());
+            list.add(reviewResponse);
+        }
+        return list;
+    }
     //admin
     public List<ReviewResponse> getReviewByProjectId(Integer projectId) {
         List<ReviewResponse> list = new ArrayList<>();
@@ -118,7 +130,7 @@ public class ReviewService {
     }
 
     //user
-    public Page<ReviewResponse> getReviewUser(Integer userId, Pageable pageable) {
+    public List<ReviewResponse> getReviewUser(Integer userId) {
         List<ReviewResponse> list = new ArrayList<>();
         LocalDate reviewDate = LocalDate.now(); // Lấy ngày hiện tại
         List<ProjectByUserRespone> userProjectReponseList = projectService.getProjectByUser(userId);
@@ -143,6 +155,6 @@ public class ReviewService {
                 }
             }
         }
-        return new PageImpl<>(list, pageable, list.size());
+        return list;
     }
 }
