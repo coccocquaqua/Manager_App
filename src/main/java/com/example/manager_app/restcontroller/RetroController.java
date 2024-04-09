@@ -34,7 +34,7 @@ public class RetroController {
         Page<Retro> list=retroService.getAll(pageable);
         return ResponseEntity.ok(list);
     }
-    @GetMapping("/{retroId}")
+    @GetMapping("/retro/{retroId}")
     public ResponseEntity<?> getById(@PathVariable Integer retroId) {
         Optional<Retro> retro = retroRepository.findById(retroId);
         return ResponseEntity.ok(retro);
@@ -44,6 +44,7 @@ public class RetroController {
         List<Retro>list=retroService.getRetroByEndDate();
         return ResponseEntity.ok(list);
     }
+    //user
     @GetMapping("/project/{projectId}")
     public ResponseEntity<?> getRetroByProjectAndDate(@PathVariable Integer projectId ) {
         List<Retro>list=retroService.getRetroByProjectIdAndDate(projectId);

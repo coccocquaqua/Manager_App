@@ -45,7 +45,7 @@ public class UserController {
         List<Users> users = userService.getAll();
         return ResponseEntity.ok(users);
     }
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<?> getById(@PathVariable Integer userId) {
         Optional<Users> users = userRepository.findById(userId);
         return ResponseEntity.ok(users);

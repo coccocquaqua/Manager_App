@@ -31,7 +31,7 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+   // @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllPage(@RequestParam(defaultValue = "1") int page) {
         if (page < 1) page = 1;
@@ -47,12 +47,12 @@ public class ProjectController {
         List<Project> projects = projectService.getAll();
         return ResponseEntity.ok(projects);
     }
-    @GetMapping("/{projectId}")
+    @GetMapping("/project/{projectId}")
     public ResponseEntity<?> getById(@PathVariable Integer projectId) {
         ProjectByIdResponse project = projectService.getById(projectId);
         return ResponseEntity.ok(project);
     }
-
+//user
     @GetMapping("/filter-user/{userId}")
     public ResponseEntity<?> getUserByProject(@PathVariable Integer userId) {
         List<ProjectByUserRespone> projectByUser = projectService.getProjectByUser(userId);
