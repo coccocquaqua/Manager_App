@@ -2,6 +2,7 @@ package com.example.manager_app.service;
 
 import com.example.manager_app.dto.ProjectByUserRespone;
 import com.example.manager_app.dto.ReviewResponse;
+import com.example.manager_app.dto.UserProjectReponse;
 import com.example.manager_app.model.Retro;
 import com.example.manager_app.model.Review;
 import com.example.manager_app.model.Users;
@@ -35,6 +36,8 @@ public class ReviewService {
     private RetroService retroService;
     @Autowired
     private RetroRepository retroRepository;
+    @Autowired
+    private UserService userService;
     private final ModelMapper modelMapper;
 
     public ReviewService(ModelMapper modelMapper) {
@@ -55,6 +58,7 @@ public class ReviewService {
         }
         return new PageImpl<>(list, pageable, reviewList.getTotalElements());
     }
+
     public List<ReviewResponse> getAll() {
         //List<Review>reviewByUsersIs=reviewRepository.findReviewByUsersId(userId);
         List<Review> reviewList = reviewRepository.findAll();
@@ -68,6 +72,7 @@ public class ReviewService {
         }
         return list;
     }
+
     //admin
     public List<ReviewResponse> getReviewByProjectId(Integer projectId) {
         List<ReviewResponse> list = new ArrayList<>();
@@ -120,11 +125,11 @@ public class ReviewService {
         review.setReviewDate(reviewDate);
         Review saveReview = reviewRepository.save(review);
         ReviewResponse reviewResponse = modelMapper.map(saveReview, ReviewResponse.class);
-        Optional<Users>usersOptional=userRepository.findById(review.getUserReviewee().getId());
+        Optional<Users> usersOptional = userRepository.findById(review.getUserReviewee().getId());
         reviewResponse.setNameUserReviewer(usersOptional.get().getUsername());
-        Optional<Users>userOptional=userRepository.findById(review.getUserReviewee().getId());
+        Optional<Users> userOptional = userRepository.findById(review.getUserReviewee().getId());
         reviewResponse.setNameUserReviewee(userOptional.get().getUsername());
-        Optional<Retro>retroOptional=retroRepository.findById(review.getRetro().getId());
+        Optional<Retro> retroOptional = retroRepository.findById(review.getRetro().getId());
         reviewResponse.setNameRetro(retroOptional.get().getName());
         return reviewResponse;
     }
@@ -156,5 +161,33 @@ public class ReviewService {
             }
         }
         return list;
+    }
+    //user : lọc ra các user có cùng project và cùng 1 user(login) đánh giá
+
+    public List<UserProjectReponse> getUserFilter(Integer userId, Integer projectId) {
+        List<UserProjectReponse> list1 = new ArrayList<>();
+        List<UserProjectReponse> list2 = new ArrayList<>();
+        List<Review> reviewList = reviewRepository.findReviewByUserReviewerId(userId);
+        List<UserProjectReponse> userProjectReponseList = userService.getUserByProject(projectId);
+        for (Review item : reviewList) {
+            for (UserProjectReponse item1 : userProjectReponseList) {
+                if (item1.getId() == item.getUserReviewee().getId()) {
+                    list1.add(item1);
+                }
+
+            }
+
+        }
+        for (UserProjectReponse item:list1) {
+            if(!userProjectReponseList.contains(item)){
+                list2.add(item);
+            }
+        }
+        for (UserProjectReponse item1:userProjectReponseList) {
+           if(!list1.contains(item1)){
+               list2.add(item1);
+           }
+        }
+        return list2;
     }
 }

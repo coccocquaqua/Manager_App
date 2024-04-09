@@ -72,4 +72,10 @@ public class ReviewController {
         List<ReviewResponse> reviewResponses = reviewService.getReviewUser(userId);
         return ResponseEntity.ok(reviewResponses);
     }
+    @GetMapping("/user/{userId}/project/{projectId}")
+
+    public ResponseEntity<?> getUserFilter(@PathVariable Integer userId,@PathVariable Integer projectId) {
+        List<UserProjectReponse> userFilter = reviewService.getUserFilter(userId,projectId);
+        return ResponseEntity.ok(userFilter);
+    }
 }
