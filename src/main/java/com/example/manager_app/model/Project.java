@@ -1,14 +1,17 @@
 package com.example.manager_app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "projects")
-public class Project  {
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -17,4 +20,8 @@ public class Project  {
     private String name;
     @Column(name = "description")
     private String description;
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
+//    @JsonIgnore
+//    private List<Retro> retro = new ArrayList<>();
+
 }

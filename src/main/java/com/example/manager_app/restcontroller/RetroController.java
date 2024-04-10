@@ -25,7 +25,7 @@ public class RetroController {
     @Autowired
     RetroRepository retroRepository;
 
-    @GetMapping()
+    @GetMapping("/admin")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") int page) {
         if (page < 1) page = 1;
         int pageNumber = page - 1;
@@ -34,7 +34,7 @@ public class RetroController {
         Page<Retro> list=retroService.getAll(pageable);
         return ResponseEntity.ok(list);
     }
-    @GetMapping("/retro/{retroId}")
+    @GetMapping("/admin/{retroId}")
     public ResponseEntity<?> getById(@PathVariable Integer retroId) {
         Optional<Retro> retro = retroRepository.findById(retroId);
         return ResponseEntity.ok(retro);
@@ -50,11 +50,11 @@ public class RetroController {
         List<Retro>list=retroService.getRetroByProjectIdAndDate(projectId);
         return ResponseEntity.ok(list);
     }
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<Retro>post(@RequestBody Retro retro){
         return ResponseEntity.ok(retroService.addRetro(retro));
     }
-    @PutMapping
+    @PutMapping("/admin")
     public ResponseEntity<Retro>put(@RequestBody Retro retro){
         return ResponseEntity.ok(retroService.updateRetro(retro));
     }

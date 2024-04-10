@@ -32,7 +32,7 @@ public class ProjectController {
     private ProjectService projectService;
 
    // @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<?> getAllPage(@RequestParam(defaultValue = "1") int page) {
         if (page < 1) page = 1;
         int pageNumber = page - 1;
@@ -42,12 +42,12 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    @GetMapping("getall")
+    @GetMapping("/admin/getall")
     public ResponseEntity<?> getAllPage() {
         List<Project> projects = projectService.getAll();
         return ResponseEntity.ok(projects);
     }
-    @GetMapping("/project/{projectId}")
+    @GetMapping("/admin/{projectId}")
     public ResponseEntity<?> getById(@PathVariable Integer projectId) {
         ProjectByIdResponse project = projectService.getById(projectId);
         return ResponseEntity.ok(project);
@@ -59,7 +59,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectByUser);
     }
 
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<?> post(@RequestBody AddProjectRequest projectRequest) {
         Project project = projectRequest.getProject();
         List<UserProjectReponse> usersList = projectRequest.getUsers();
@@ -67,7 +67,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectByUserRespone);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<?> deleteUsers(@PathVariable Integer id) {
         projectService.deteleProject(id);
         return ResponseEntity.ok().build();

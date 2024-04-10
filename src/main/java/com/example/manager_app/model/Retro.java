@@ -3,12 +3,13 @@ package com.example.manager_app.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @Entity
 @Table(name = "retro")
-public class Retro {
+public class Retro{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

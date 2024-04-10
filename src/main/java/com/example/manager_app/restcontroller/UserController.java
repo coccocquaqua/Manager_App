@@ -29,7 +29,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
+    @GetMapping("/admin")
 
     public ResponseEntity<?> getAllPage(@RequestParam(defaultValue = "1") int page) {
         if (page < 1) page = 1;
@@ -40,12 +40,12 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("getall")
+    @GetMapping("/admin-pm/getall")
     public ResponseEntity<?> getAllPage() {
         List<Users> users = userService.getAll();
         return ResponseEntity.ok(users);
     }
-    @GetMapping("/user/{userId}")
+    @GetMapping("/admin/user/{userId}")
     public ResponseEntity<?> getById(@PathVariable Integer userId) {
         Optional<Users> users = userRepository.findById(userId);
         return ResponseEntity.ok(users);
@@ -57,23 +57,23 @@ public class UserController {
 //        UserProjectReponse userProjectReponse = userService.addUser(users, projectList,userRequest.getRole());
 //        return ResponseEntity.ok(userProjectReponse);
 //    }
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<UserProjectReponse>post(@RequestBody Users users){
         return ResponseEntity.ok(userService.addUser(users));
     }
 
-    @GetMapping("/filter-project/{projectId}")
+    @GetMapping("/admin/filter-project/{projectId}")
     public ResponseEntity<?> getUserByProject(@PathVariable Integer projectId) {
         System.out.println(projectId + "bbb");
         List<UserProjectReponse> userProjectReponse = userService.getUserByProject(projectId);
         return ResponseEntity.ok(userProjectReponse);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<?> deleteUsers(@PathVariable Integer id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
-    @PutMapping()
+    @PutMapping("/admin")
     public ResponseEntity<?> updateUser(@RequestBody Users users) {
         return ResponseEntity.ok(userService.updateUser(users));
     }
