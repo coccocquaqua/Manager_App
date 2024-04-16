@@ -29,31 +29,13 @@ public class JwtUtils {
     private int jwtExpirationRefresh;
     @Value("${bezkoder.app.jwtCookieName}")
     private String jwtCookie;
-
-//    public String getJwtFromCookies(HttpServletRequest request) {
-//        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-//        if (cookie != null) {
-//            return cookie.getValue();
-//        } else {
-//            return null;
-//        }
-//    }
-//    public ResponseCookie generateJwtCookie(UserDetailImpl userPrincipal) {
-//        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-//        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60 * 1000).httpOnly(true).build();
-//        return cookie;
-//    }
-    public String generateTokenFromUsername(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(), SignatureAlgorithm.HS256)
-                .compact();
-    }
+    //lấy khóa để tạo và xác thực mã thông báo jwwt
+    //
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
+    //tạo token cho người dunng sau khi đăng nhập thành công
+    //tạo ra 1 jwt token từ đối tượng userdetail
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -70,18 +52,22 @@ public class JwtUtils {
                 .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
     }
+    //kiểm tra token có hợp lệ không
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
+        final String username = getUsernameFromToken(token); //láy thông tin ng dùng từ token
+       //so sánh usernamw do token trả về với username đối tượng userdetail cung cấp
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+    //trả về coolie trống để cóa jwwt từ trình duyệt
     public ResponseCookie getCleanJwtCookie() {
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, "").path("/api").maxAge(0).build();
         return cookie;
     }
-
+//lấy thông tin về người dùng từ token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
+    // hàm trích xuất thông tin cụ thể từ jwt token
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -89,10 +75,12 @@ public class JwtUtils {
                 .getBody();
         return claimsResolver.apply(claims);
     }
+    //kiểm tra xem  token co hợp lệ hay không
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
+    //kểm tra xem token hết hạn hay chưa
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }

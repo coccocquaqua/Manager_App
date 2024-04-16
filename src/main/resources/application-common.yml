@@ -1,0 +1,52 @@
+bezkoder:
+  app:
+    jwtCookieName: bezkoder
+    jwtExpirationMs: 86400000
+    jwtExpirationRefresh: 604800000
+    jwtSecret: ======================BezKoder=Spring===========================
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+server:
+  port: 8081
+spring:
+  application:
+    name: manager_app
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    password: '0302'
+    url: jdbc:mysql://localhost:3306/manager
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    password: tgjb xgae ytoh mnyy
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: quynhdtph21491@fpt.edu.vn
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 521896309695-o3fhpj1nt86abm4hns3baumfl4spe44f.apps.googleusercontent.com
+            client-secret: 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

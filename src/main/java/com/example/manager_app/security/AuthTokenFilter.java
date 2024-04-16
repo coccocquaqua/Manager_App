@@ -27,12 +27,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        //lấy giá trị tieu đề từ yêu cầu http chứa token
         final String requestTokenHeader = request.getHeader("Authorization");
         String username = null;
         String jwtToken = null;
+        //kiểm tra tiêu đề authotity có tồn tại và bắt đầu bằng bearer không
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
+                //lấy tên người dùng từ token
                 username = jwtUtils.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
@@ -43,11 +46,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     //kiểm tra xem người dùng đã được xác thực và được đặt vào SecurityContextHolder chưa
         // không hợp lệ sẽ chuyển tiếp đến doFilter lọc tiếp theo
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            //tìm kiếm thông tin người dùng  từ csdl
             UserDetails userDetails = this.userDetailServiceImpl.loadUserByUsername(username);
             System.out.println(":)))))"+userDetails.getAuthorities());
+            //kiểm tra xem token có hợp lệ khoong
             if (jwtUtils.validateToken(jwtToken, userDetails)) {
+                //tạo đối tượng với userdetail và danh sách quyền truy cập của người dùng
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
+                //đặt đối tượng vào SecurityContextHolder để xác thực
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }

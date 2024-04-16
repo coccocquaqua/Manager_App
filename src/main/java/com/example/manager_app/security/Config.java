@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class Config extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthEntryPoinJwt authEntryPoinJwt;
@@ -32,50 +34,36 @@ public class Config extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() { //mã hóa mật khâ người dùng
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        return super.authenticationManagerBean(); //xác thực người dùng
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailServiceImpl).passwordEncoder(passwordEncoder());
+    //cấu hình quá trình xác thuc ngời dùng ,userdetail-> tìm kiếm thông tin từ csdl và mã hóa pass user
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable()
-//                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling().authenticationEntryPoint(authEntryPoinJwt).and()
-//                // .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .authorizeRequests()
-//                .antMatchers("/api/User/**", "/api/auth/**","/logout").permitAll()
-//                .antMatchers("/api/Project/**").hasAnyAuthority("ADMIN");
-//
-//        http
-//                .authorizeRequests(authorizeRequests ->
-//                        authorizeRequests
-//                                .anyRequest().authenticated() // Cho phép tất cả các yêu cầu không yêu cầu xác thực
-//                )
-//                .oauth2Login(); // Sử dụng OAuth2 cho việc đăng nhập
-
+//cấu hình quy tắc bảo mật cho ứng dụng
         http
-                .cors()
+                .cors()//cho phép  truy cập từ các domain khác
                 .and()
-                .csrf().disable()
-                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-                //.exceptionHandling().authenticationEntryPoint(authEntryPoinJwt).and()
+                .csrf().disable() //tắt tính năng bảo vệ csrf
+                .exceptionHandling().authenticationEntryPoint(authEntryPoinJwt).and()
                 .authorizeRequests()
                 .antMatchers( "/api/auth/google").authenticated()
-                .antMatchers( "/api/auth/**").permitAll()
+                .antMatchers( "/api/auth/**","/scope/**","/api/email/**","/api/schedule/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/Retro/","/api/Retro/retro/","/api/Retro/end-date/").hasAnyAuthority("USER","PM","ADMIN")
                 .antMatchers(HttpMethod.POST,"/api/Review/").hasAnyAuthority("USER","PM","ADMIN")
-                .antMatchers(HttpMethod.GET,"/api/Review/getall-user/**","/api/Review/user/**/project/**").hasAnyAuthority("USER","PM","ADMIN")
+                .antMatchers(HttpMethod.GET,"/api/Review/getall-user/**","/api/Review/user/**/project/**","/api/Review/user/**").hasAnyAuthority("USER","PM","ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/Project/filter-user/**","/api/Retro/project/**").hasAnyAuthority("USER","PM","ADMIN")
                 .antMatchers("/api/Account/**").hasAuthority("ADMIN")
                 .antMatchers("/api/User/admin/**").hasAuthority("ADMIN")

@@ -49,7 +49,7 @@ public class ReviewController {
         List<ReviewResponse> reviewResponses = reviewService.getReviewByProjectId(projectId);
         return ResponseEntity.ok(reviewResponses);
     }
-    @GetMapping("/admin/user/{userId}")
+    @GetMapping("/user/{userId}")
 
     public ResponseEntity<?> getReviewByUser(@PathVariable Integer userId) {
         List<ReviewResponse> reviewResponses = reviewService.getReviewByReviewerId(userId);
@@ -79,6 +79,12 @@ public class ReviewController {
 
     public ResponseEntity<?> getUserFilter(@PathVariable Integer userId,@PathVariable Integer projectId) {
         List<UserProjectReponse> userFilter = reviewService.getUserFilter(userId,projectId);
+        return ResponseEntity.ok(userFilter);
+    }
+    @GetMapping("/user-filter/{userId}")
+
+    public ResponseEntity<?> getUserFilterPAU(@PathVariable Integer userId) {
+        List<UserProjectReponse> userFilter = reviewService.getUserFilterPAU(userId);
         return ResponseEntity.ok(userFilter);
     }
 }

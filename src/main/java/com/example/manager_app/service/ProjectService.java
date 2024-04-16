@@ -19,20 +19,30 @@ import java.util.Optional;
 
 @Service
 public class ProjectService {
-    @Autowired
-    User_ProjectRepository user_projectRepository;
+
+    private final User_ProjectRepository user_projectRepository;
     @Autowired
     ProjectRepository projectRepository;
     @Autowired
     UserService userService;
+
+    private UserRepository userRepository;
+    // Setter method for user injection
+   @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     @Autowired
-    UserRepository userRepository;
+    public ProjectService(User_ProjectRepository user_projectRepository) {
+        this.user_projectRepository = user_projectRepository;
+    }
 
 
-    public List<Project>getAll(){
+    public List<Project> getAll() {
         return projectRepository.findAll();
     }
-    public Page<ProjectByUserRespone> getAllPage(Pageable pageable){
+
+    public Page<ProjectByUserRespone> getAllPage(Pageable pageable) {
         Page<Project> projects = projectRepository.findAll(pageable);
         List<User_Project> userProjects = user_projectRepository.findAll();
         List<ProjectByUserRespone> list = new ArrayList<>();
@@ -57,13 +67,13 @@ public class ProjectService {
     public List<ProjectByUserRespone> getProjectByUser(Integer userId) {
         List<ProjectByUserRespone> projectByUserResponeList = new ArrayList<>();
         List<User_Project> user_projects = user_projectRepository.findUser_ProjectByUsersId(userId);
-        Optional<Users>usersOptional=userRepository.findById(userId);
-        Users users=usersOptional.get();
+        Optional<Users> usersOptional = userRepository.findById(userId);
+        Users users = usersOptional.get();
         for (User_Project userProject : user_projects) {
             Optional<Project> projectOptional = projectRepository.findById(userProject.getProject().getId());
             if (projectOptional.isPresent()) {
                 Project project = projectOptional.get();
-              projectByUserResponeList.add(new ProjectByUserRespone(project.getId(), project.getName(), project.getDescription() ,users.getUsername(),userProject.getRole(),userProject.getStatus1()));
+                projectByUserResponeList.add(new ProjectByUserRespone(project.getId(), project.getName(), project.getDescription(), users.getUsername(), userProject.getRole(), userProject.getStatus1()));
 
             }
         }
@@ -78,16 +88,17 @@ public class ProjectService {
         }
         projectRepository.deleteById(project);
     }
-    public ProjectByIdResponse getById(Integer projectId){
-        Optional<Project>optionalProject=projectRepository.findById(projectId);
-        ProjectByIdResponse projectByUserRespone=new ProjectByIdResponse();
+
+    public ProjectByIdResponse getById(Integer projectId) {
+        Optional<Project> optionalProject = projectRepository.findById(projectId);
+        ProjectByIdResponse projectByUserRespone = new ProjectByIdResponse();
         projectByUserRespone.setId(optionalProject.get().getId());
         projectByUserRespone.setName(optionalProject.get().getName());
         projectByUserRespone.setDescription(optionalProject.get().getDescription());
-        List<UserProjectReponse>listUser=userService.getUserByProject(projectId);
-        List<UserProjectReponse>list=new ArrayList<>();
-        for (UserProjectReponse item1:listUser) {
-            if(item1.getStatus().equalsIgnoreCase("đang hoạt động")){
+        List<UserProjectReponse> listUser = userService.getUserByProject(projectId);
+        List<UserProjectReponse> list = new ArrayList<>();
+        for (UserProjectReponse item1 : listUser) {
+            if (item1.getStatus().equalsIgnoreCase("đang hoạt động")) {
                 list.add(item1);
 
             }
@@ -195,7 +206,7 @@ public class ProjectService {
 
             // Tìm vai trò của người dùng trong dự án và thêm vào response
             for (User_Project userProject : userProjectsInDB) {
-                if(userProject.getStatus()==1){
+                if (userProject.getStatus() == 1) {
                     // Tạo đối tượng response
                     ProjectByUserRespone projectByUserRespone = new ProjectByUserRespone();
                     projectByUserRespone.setId(project.getId());

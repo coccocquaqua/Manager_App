@@ -20,7 +20,7 @@ public class Project {
     private String name;
     @Column(name = "description")
     private String description;
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "project")
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "project", cascade = {CascadeType.PERSIST,CascadeType.ALL})
 //    @JsonIgnore
 //    private List<Retro> retro = new ArrayList<>();
 

@@ -18,7 +18,7 @@ import java.util.Set;
 public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
-
+// sử dụng để thể hiện chi tiết người dùng và quyền hạn (vai trò) cho mục đích xác thực và ủy quyền.
     @Override
     public UserDetails loadUserByUsername(String Username) throws UsernameNotFoundException {
         Optional<Users> users = userRepository.findUsersByUsername(Username);

@@ -49,6 +49,10 @@ public class RetroService {
 
         return list;
     }
+    public List<Retro> getRetroByProjectId(Integer projectId) {
+        List<Retro>list=retroRepository.findRetroByProjectId(projectId);
+        return list;
+    }
 
     public Retro addRetro(Retro retro) {
         Retro retro1 = retroRepository.save(retro);
