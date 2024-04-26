@@ -54,18 +54,18 @@ public class Config extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 //cấu hình quy tắc bảo mật cho ứng dụng
         http
-                .cors()//cho phép  truy cập từ các domain khác
+                .cors()//cho phép  truy cập từ các domain khácn
                 .and()
                 .csrf().disable() //tắt tính năng bảo vệ csrf
                 .exceptionHandling().authenticationEntryPoint(authEntryPoinJwt).and()
                 .authorizeRequests()
                 .antMatchers( "/api/auth/google").authenticated()
-                .antMatchers( "/api/auth/**","/scope/**","/api/email/**","/api/schedule/**").permitAll()
+                .antMatchers( "/api/auth/**","/scope/**","/api/email/**","/api/schedule/**","/api/quartz/**","/language/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/Retro/","/api/Retro/retro/","/api/Retro/end-date/").hasAnyAuthority("USER","PM","ADMIN")
                 .antMatchers(HttpMethod.POST,"/api/Review/").hasAnyAuthority("USER","PM","ADMIN")
                 .antMatchers(HttpMethod.GET,"/api/Review/getall-user/**","/api/Review/user/**/project/**","/api/Review/user/**").hasAnyAuthority("USER","PM","ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/Project/filter-user/**","/api/Retro/project/**").hasAnyAuthority("USER","PM","ADMIN")
-                .antMatchers("/api/Account/**").hasAuthority("ADMIN")
+                .antMatchers("/api/Account/**").permitAll()
                 .antMatchers("/api/User/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/api/Project/admin/**").hasAnyAuthority("ADMIN","PM")
                 .antMatchers("/api/Retro/admin/**").hasAuthority("ADMIN")
@@ -76,6 +76,6 @@ public class Config extends WebSecurityConfigurerAdapter {
                 .and()
                .oauth2Login();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        //thêm filter để xác thực token của người dùng trước khi xác thực thông tin người dùng
     }
 }

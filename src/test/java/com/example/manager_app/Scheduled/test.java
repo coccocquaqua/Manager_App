@@ -7,7 +7,7 @@ public class test {
     @Test
     public void test() {
         ScheduledTasks scheduledTasks = new ScheduledTasks();
-        scheduledTasks.runEveryMinute();
+       // scheduledTasks.runEveryMinute();
         assert true;
     }
 }

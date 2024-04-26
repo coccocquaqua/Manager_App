@@ -26,20 +26,23 @@ public class AccountService {
         RestTemplate restTemplate=new RestTemplate();
         String apiUrl="http://localhost:8081/api/Account/accounts";
         ResponseEntity<Account[]>responseEntity=restTemplate.getForEntity(apiUrl,Account[].class);
+        //getforEntity  sử dụng để gửi yêu cầu GET đến api và nhận phản hồi dưới dạng ResponseEntity
         Account[] accounts=responseEntity.getBody();
         for (Account account:accounts) {
             accountRepository.save(account);
         }
     }
     public List<Account> readAccounts() {
+        // chuyển đổi dữ liệu định dạng khác nhau
         ObjectMapper objectMapper = new ObjectMapper();
-        // chuyển đổi kiểu dữ liệu mà objectmapper chuyển đổi từ json thành list đối tượng
+        //lưu trữ thông tin loại dữ liệu
         TypeReference<List<Account>> typeReference = new TypeReference<List<Account>>() {};
-        //
+        // đọc tệp json từ thư mục resources
         InputStream inputStream = TypeReference.class.getResourceAsStream("/account.json");
 
         try {
-            //đọc ữ liệu từ file
+            //đọc dữ liệu từ file
+            //readValue đọc dữ liệu từ một InputStream và chuyển đổi json từ tệp vào danh sách đối tượng Account
             List<Account> accounts = objectMapper.readValue(inputStream, typeReference);
             return accounts;
         } catch (IOException e) {
@@ -58,5 +61,8 @@ public class AccountService {
             list.add(accountRespone);
         }
         return list;
+    }
+    public void deleteAllAccounts() {
+        accountRepository.deleteAll();
     }
 }

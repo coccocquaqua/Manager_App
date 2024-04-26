@@ -1,12 +1,19 @@
-#profiles: test
-#datasource:
-#  username: root
-#  password: root123
-#  url: jdbc:mysql://localhost:3306/manager
-#  driver-class-name: com.mysql.cj.jdbc.Driver
-#bezkoder:
-#  app:
-#    jwtCookieName: bezkoder
-#    jwtSecret: "======================BezKoder=Spring==========================="
-#    jwtExpirationMs: 86400000
-#    jwtExpirationRefresh: 604800000
+server:
+  port: 8081
+spring:
+  application:
+    name: manager_app
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    password: '0302'
+    url: jdbc:mysql://localhost:3306/manager
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true

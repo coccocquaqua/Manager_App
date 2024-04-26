@@ -27,8 +27,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        //lấy giá trị tieu đề từ yêu cầu http chứa token
-        final String requestTokenHeader = request.getHeader("Authorization");
+
+        //lấy thông tin từ request
+        //FilterChain giúp chuyển tiếp request đến các filter khác
+
+        final String requestTokenHeader = request.getHeader("Authorization"); // lấy tiêu đề authorization từ request
+        //
         String username = null;
         String jwtToken = null;
         //kiểm tra tiêu đề authotity có tồn tại và bắt đầu bằng bearer không
@@ -55,9 +59,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 //đặt đối tượng vào SecurityContextHolder để xác thực
+                //SecurityContextHolder chứa thông tin về người dùng đang được xác thực
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        chain.doFilter(request, response);
+        chain.doFilter(request, response); //chuyển tiếp request đến các filter khác
     }
 }

@@ -19,7 +19,7 @@ public interface ReviewMapper {
     @Mapping(source = "userReviewee", target = "nameUserReviewee", qualifiedByName = "userToString")
     ReviewResponse toReviewResponse(Review review);
 
-    @Named("userToString")
+    @Named("userToString") //định nghĩa tên cho phương thức chuyển đổi
     default String userToString(Users user) {
         return user != null ? user.getUsername() : null;
     }

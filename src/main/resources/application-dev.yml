@@ -1,0 +1,17 @@
+
+spring:
+  #  config:
+  #    activate:
+  #      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${username}
+    url: jdbc:mysql:${hostname}:${port}/manager
+    password: ${password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
+server:
+  port: '${serverPort}'
+#

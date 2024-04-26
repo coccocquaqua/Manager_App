@@ -43,7 +43,7 @@ public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDen
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String, String>> handleBadCredentialsException(BadCredentialsException e) {
         Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("message", "Incorrect username or password");
+        errorResponse.put("message", e.getMessage());
         errorResponse.put("status", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }

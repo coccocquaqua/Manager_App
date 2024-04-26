@@ -37,7 +37,7 @@ public class EmailService{
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
                 helper.setFrom("quynhdtph21491@fpt.edu.vn");
                 helper.setTo(item);
-                helper.setSubject("subject");
+                helper.setSubject("Thông báo");
                 String html = templateEngine.process("email-template.html", new Context());
                 helper.setText(html, true);
                 javaMailSender.send(mimeMessage);

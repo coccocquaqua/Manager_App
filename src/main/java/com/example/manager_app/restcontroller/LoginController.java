@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+
 import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
@@ -43,30 +44,13 @@ public class LoginController {
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody JwtRequest jwtRequest) throws Exception,BadCredentialsException {
-        try {
-            Authentication authentication = authenticate(jwtRequest.getUsername(), jwtRequest.getPassword());
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            System.out.println("hihi" + userDetails);
-            String token = jwtUtils.generateToken(userDetails);
-            String refreshToken = jwtUtils.generateRefreshToken(userDetails);
-            Optional<Users> users=userRepository.findUsersByUsername(jwtRequest.getUsername());
-            UserInfoResponse userInfoResponse = new UserInfoResponse(users.get().getId(),userDetails.getUsername(), token, refreshToken);
-            return ResponseEntity.ok(userInfoResponse);
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-//        } catch (BadCredentialsException e) {
-//            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-    }
+    public ResponseEntity<?> login(@RequestBody JwtRequest jwtRequest) throws Exception, BadCredentialsException {
+        UserInfoResponse userInfoResponse = userService.login(jwtRequest);
+        return ResponseEntity.ok(userInfoResponse);
 
-    private Authentication authenticate(String username, String password) throws Exception {
-        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
     @PostMapping("/logout")
@@ -126,10 +110,10 @@ public class LoginController {
 
     @GetMapping("/google")
     public ResponseEntity<?> loginGoogle(@AuthenticationPrincipal OAuth2User authenticationToken) {
-        System.out.println(authenticationToken+"ok");
+        System.out.println(authenticationToken + "ok");
         try {
             UserInfoResponse userInfoResponse = userService.loginGoogle(authenticationToken);
-            System.out.println(userInfoResponse+"user");
+            System.out.println(userInfoResponse + "user");
             return ResponseEntity.ok(userInfoResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error refreshing token: " + e.getMessage());
@@ -138,4 +122,4 @@ public class LoginController {
 
     }
 
-    }
+}

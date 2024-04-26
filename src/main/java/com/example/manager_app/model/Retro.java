@@ -1,12 +1,18 @@
 package com.example.manager_app.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "retro")
 public class Retro{
@@ -26,4 +32,5 @@ public class Retro{
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
 }

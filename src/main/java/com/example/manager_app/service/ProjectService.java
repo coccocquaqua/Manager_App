@@ -32,6 +32,7 @@ public class ProjectService {
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Autowired
     public ProjectService(User_ProjectRepository user_projectRepository) {
         this.user_projectRepository = user_projectRepository;

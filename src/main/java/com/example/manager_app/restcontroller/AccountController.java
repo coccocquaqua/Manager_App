@@ -41,4 +41,13 @@ public class AccountController {
         Optional<Account> list=accountRepository.findById(id);
         return ResponseEntity.ok(list);
     }
+    @DeleteMapping("/deleteall")
+    public String deleteAllAccounts() {
+        try {
+            accountRepository.deleteAll();
+            return "All accounts have been deleted successfully.";
+        } catch (Exception e) {
+            return "An error occurred while deleting accounts: " + e.getMessage();
+        }
+    }
 }

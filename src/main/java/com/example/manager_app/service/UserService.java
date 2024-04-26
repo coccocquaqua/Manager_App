@@ -1,9 +1,10 @@
 package com.example.manager_app.service;
 
-import com.example.manager_app.dto.ProjectByUserRespone;
-import com.example.manager_app.dto.RoleByProjectRespone;
+import com.example.manager_app.dto.JwtRequest;
 import com.example.manager_app.dto.UserInfoResponse;
 import com.example.manager_app.dto.UserProjectReponse;
+import com.example.manager_app.dtoDemo.UserCloseProjection;
+import com.example.manager_app.dtoDemo.UserOpenProjection;
 import com.example.manager_app.model.Project;
 import com.example.manager_app.model.Role;
 import com.example.manager_app.model.User_Project;
@@ -13,26 +14,27 @@ import com.example.manager_app.repository.UserRepository;
 import com.example.manager_app.repository.User_ProjectRepository;
 import com.example.manager_app.security.JwtUtils;
 import com.example.manager_app.security.UserDetailServiceImpl;
-import com.mysql.cj.conf.PropertyKey;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -53,6 +55,8 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
     public UserService(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
@@ -190,6 +194,36 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    public UserInfoResponse login(JwtRequest jwtRequest) throws Exception {
+        try {
+            Authentication authentication = authenticate(jwtRequest.getUsername(), jwtRequest.getPassword()); // xác thực thông tin người dùng
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal(); // lấy thông tin người dùng từ authentication
+            String token = jwtUtils.generateToken(userDetails); // tạo token
+            String refreshToken = jwtUtils.generateRefreshToken(userDetails); // tạo refreshToken
+            Optional<Users> users = userRepository.findUsersByUsername(jwtRequest.getUsername()); // lấy thông tin người dùng từ database
+            if (users.isPresent()) { // nếu người dùng tồn tại
+                return new UserInfoResponse(users.get().getId(), userDetails.getUsername(), token, refreshToken); // trả về thông tin người dùng
+            } else {
+                throw new Exception("User not found");
+            }
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        }
+    }
+
+    private Authentication authenticate(String username, String password) throws BadCredentialsException { //
+        Optional<Users> users = userRepository.findUsersByUsername(username);
+        if (!users.isPresent()) {
+                throw new BadCredentialsException("UserName not found");
+            }
+
+            if (!passwordEncoder.matches(password, users.get().getPassword())) {
+                throw new BadCredentialsException("Invalid password");
+        }
+    return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        //UsernamePasswordAuthenticationToken được sử dụng để tạo một đối tượng chứa thông tin xác thực của người dùng
+    }
+
 //    public UserProjectReponse addUser(Users users, List<ProjectByUserRespone> projectList,String role) {
 //        Optional<Users> usersOptional = userRepository.findById(users.getId());
 //        List<User_Project> user_projects = null;
@@ -250,4 +284,32 @@ public class UserService {
 //        }
 //        return userProjectReponse;
 //    }
+
+    public List<Users>getAllSortUsers(){
+        Sort sort=Sort.by(Sort.Direction.ASC,"username");
+        return userRepository.findAllSortUsers(sort);
+    }
+    public Slice<Users> getUsersSlice(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return userRepository.findAllUsersWithPaginationSlice(pageRequest);
+    }
+    @Cacheable(value = "users") //Lưu kết quả trả về vào cache với key là username
+    public Optional<Users> CacheAble(String username) {
+        return userRepository.findUsersByUsernamesJPQLCache(username);
+    }
+    @CacheEvict(value = "users", key = "#username") //Xóa cache với key là username
+    public void CacheEvict(String username) {
+    }
+    @CachePut(value = "users", key = "#username") //Cập nhật cache với key là username
+    public Optional<Users> CachePut(String username) {
+        return userRepository.findUsersByUsernamesJPQLCache(username);
+    }
+    //Close Projection
+    public List<UserCloseProjection> getUsersClose(String email) {
+        return userRepository.findByEmail(email);
+    }
+   //Open Projection
+    public UserOpenProjection getUsersByUsernamesOpen(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

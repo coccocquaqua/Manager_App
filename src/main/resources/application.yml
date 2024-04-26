@@ -1,4 +1,14 @@
 spring:
   profiles:
-    include: common
+    include: dev,common
 # Các cấu hình khác ở dưới
+demo1:
+  environment: local
+  hosts:
+    - https://www.example1.com
+    - https://www.example2.com
+demo2:
+  environment: pod
+  hosts:
+    - https://www.example1.com
+    - https://www.example2.com
